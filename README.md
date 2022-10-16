@@ -16,13 +16,13 @@ GeoGallery običnu galeriju pretvara u nešto zanimljivo, poučno i interaktivno
 Oznaka | Naziv | Kratki opis | Odgovorni član tima
 ------ | ----- | ----------- | -------------------
 F01 | Korištenje kamere | Za osnovne funkcije GeoGalleryja potrebno je omogućiti korištenje kamere | Noa Midžić
-F02 | Korištenje mikrofona | Za osnovne funkcije GeoGalleryja potrebno je omogućiti korištenje mikrofona | ...
-F03 | Korištenje lokacije | Iako nije nužno, GeoGallery može koristiti lokaciju mobilnog uređaja da bi automatski postavio medije na njihovu lokaciju na karti | ...
-F04 | Korištenje Google karti | GeoGallery za uslugu karte koristi Googleove servise | ...
-F05 | CRUD funkcionalnosti nad medijima | Korisnik može dodavati, pregledavati, mijenjati i brisati medije i njihove informacije | ...
+F02 | Korištenje mikrofona | Za osnovne funkcije GeoGalleryja potrebno je omogućiti korištenje mikrofona | Hrvoje Lukšić
+F03 | Korištenje lokacije | Iako nije nužno, GeoGallery može koristiti lokaciju mobilnog uređaja da bi automatski postavio medije na njihovu lokaciju na karti | David Kajzogaj
+F04 | Korištenje Google karti | GeoGallery za uslugu karte koristi Googleove servise | David Kajzogaj
+F05 | CRUD funkcionalnosti nad medijima | Korisnik može dodavati, pregledavati, mijenjati i brisati medije i njihove informacije | Hrvoje Lukšić
 F06 | Dohvat informacija s wiki stranice | GeoGallery radi opisa lokacije (gdje je moguće) koristi informacije s wiki stranica s otvorenim API-jem | Noa Midžić
-F07 | Ručno postavljanje medija | Korisnik može ručno postavljati medije na bilo koju lokaciju na karti koja se nalazi u aplikaciji | ...
-F08 | Dijeljenje medija | Korisnik može medije dijeliti na društvenim mrežama zajedno s odabranim informacijama | ...
+F07 | Ručno postavljanje medija | Korisnik može ručno postavljati medije na bilo koju lokaciju na karti koja se nalazi u aplikaciji | David Kajzogaj
+F08 | Dijeljenje medija | Korisnik može medije dijeliti na društvenim mrežama zajedno s odabranim informacijama | Hrvoje Lukšić
 F09 | Statistika | Korisnik može vidjeti koliko je zapisa snimio na pojedinom kontinentu, državi, gradu itd. | Noa Midžić
 
 ## Tehnologije i oprema
