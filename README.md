@@ -29,7 +29,7 @@ F09 | Statistika | Korisnik može vidjeti koliko je zapisa snimio na pojedinom k
 GeoGallery je namijenjen za Android uređaje. Za razvoj ćemo koristiti Android studio i programski jezik Kotlin. Potrebni vanjski servisi su API za Google karte i Wikpediju.
 
 ## Baza podataka i web server
--
+--
 
 ## .gitignore
 Uzmite u obzir da je u mapi Software .gitignore konfiguriran za nekoliko tehnologija, ali samo ako će projekti biti smješteni direktno u mapu Software ali ne i u neku pod mapu. Nakon odabira konačne tehnologije i projekta obavezno dopunite/premjestite gitignore kako bi vaš projekt zadovoljavao kriterije koji su opisani u ReadMe.md dokumentu dostupnom u mapi Software.
