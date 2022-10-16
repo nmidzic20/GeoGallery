@@ -26,7 +26,7 @@ F08 | Dijeljenje medija | Korisnik može medije dijeliti na društvenim mrežama
 F09 | Statistika | Korisnik može vidjeti koliko je zapisa snimio na pojedinom kontinentu, državi, gradu itd. | Noa Midžić
 
 ## Tehnologije i oprema
-GeoGallery je namijenjen za Android uređaje. Za razvoj ćemo koristiti Android studio i programski jezik Kotlin. Potrebni vanjski servisi su API za Google karte i Wikpediju.
+GeoGallery je namijenjen za Android uređaje. Za razvoj ćemo koristiti Android studio i programski jezik Kotlin. Potrebni vanjski servisi su API za Google karte i wiki stranice.
 
 ## Baza podataka i web server
 --
