@@ -6,4 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".HomeActivity">
 
+    <ImageButton
+        android:id="@+id/ibtnCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_baseline_camera_alt_24" />
 </androidx.constraintlayout.widget.ConstraintLayout>
