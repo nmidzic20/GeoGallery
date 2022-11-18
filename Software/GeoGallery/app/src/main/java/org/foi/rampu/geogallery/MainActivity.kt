@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         auth = Firebase.auth
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("826124397115-k6sgb8csrs0q86tfg6racm6t37ove33p.apps.googleusercontent.com")
+            .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
 
@@ -50,6 +50,11 @@ class MainActivity : AppCompatActivity() {
     private fun signIn() {
         val signInIntent = googleSignInClient.signInIntent
         startActivityForResult(signInIntent, RC_SIGN_IN)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        updateUI(auth.currentUser)
     }
 
     private fun updateUI(user: FirebaseUser?) {
