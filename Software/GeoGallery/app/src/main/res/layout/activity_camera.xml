@@ -41,5 +41,6 @@
         android:layout_marginBottom="48dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_video" />
+        app:srcCompat="@drawable/ic_video"
+        app:tint="@color/black" />
 </androidx.constraintlayout.widget.ConstraintLayout>
