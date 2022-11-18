@@ -6,4 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".AudioActivity">
 
+    <ImageButton
+        android:id="@+id/ibtnRecord"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:cropToPadding="false"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_mic_24" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

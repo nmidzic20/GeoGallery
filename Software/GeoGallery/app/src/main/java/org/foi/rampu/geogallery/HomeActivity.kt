@@ -18,5 +18,10 @@ class HomeActivity : AppCompatActivity() {
             val intent = Intent(this, CameraActivity::class.java)
             startActivity(intent)
         }
+
+        viewBinding.ibtnAudio.setOnClickListener {
+            val intent = Intent(this, AudioActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
