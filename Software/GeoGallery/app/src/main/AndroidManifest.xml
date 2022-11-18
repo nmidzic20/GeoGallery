@@ -21,6 +21,13 @@
         android:theme="@style/Theme.GeoGallery"
         tools:targetApi="31">
         <activity
+            android:name=".AudioActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".CameraActivity"
             android:exported="false">
             <meta-data
