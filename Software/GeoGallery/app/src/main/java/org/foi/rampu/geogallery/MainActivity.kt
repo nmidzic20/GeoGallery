@@ -25,7 +25,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object{
         const val RC_SIGN_IN = 1001
-        const val EXTRA_NAME = "GeoGallery"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         auth = Firebase.auth
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestIdToken("826124397115-k6sgb8csrs0q86tfg6racm6t37ove33p.apps.googleusercontent.com")
             .requestEmail()
             .build()
 
@@ -44,6 +43,11 @@ class MainActivity : AppCompatActivity() {
 
         viewBinding.btnSignIn.setOnClickListener{
             signIn()
+        }
+
+        viewBinding.btnTest.setOnClickListener {
+            startActivity(Intent(this, HomeActivity::class.java))
+            finish()
         }
     }
 
