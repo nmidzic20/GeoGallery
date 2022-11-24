@@ -1,41 +1,33 @@
 {
   "project_info": {
-    "project_number": "826124397115",
-    "project_id": "geogallery-ac62b",
-    "storage_bucket": "geogallery-ac62b.appspot.com"
+    "project_number": "518855406867",
+    "project_id": "geogallery-e1ca0",
+    "storage_bucket": "geogallery-e1ca0.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:826124397115:android:1cfa6defc91be7ca1f8a1e",
+        "mobilesdk_app_id": "1:518855406867:android:ea082e7e36d940174756e6",
         "android_client_info": {
           "package_name": "org.foi.rampu.geogallery"
         }
       },
       "oauth_client": [
         {
-          "client_id": "826124397115-077sdjf4tfjana8m25u88qd1pvjdngdq.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "org.foi.rampu.geogallery",
-            "certificate_hash": "d140aab8a1331a65f17c266a5616aa75d8119e3b"
-          }
-        },
-        {
-          "client_id": "826124397115-k6sgb8csrs0q86tfg6racm6t37ove33p.apps.googleusercontent.com",
+          "client_id": "518855406867-o5s8pcndqb38jffp9a960f7ehltn191k.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAJjdPiJ6DunarslZCUWABi_6mB2I4eHrM"
+          "current_key": "AIzaSyC2s8Urr7UteSlC7lFZ8LL1JGddHw8rSWc"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "826124397115-k6sgb8csrs0q86tfg6racm6t37ove33p.apps.googleusercontent.com",
+              "client_id": "518855406867-o5s8pcndqb38jffp9a960f7ehltn191k.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
