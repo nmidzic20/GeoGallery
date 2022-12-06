@@ -46,46 +46,15 @@ open class HomeActivity : AppCompatActivity() {
 
         }
 
-        //display_photos()
-        for (i in 1..3) createFolders()
+        for (i in 1..10)
+            createFolderIcon()
 
     }
 
-    fun display_photos()
+
+    fun createFolderIcon()
     {
-        val projection = arrayOf(MediaStore.Images.Media._ID)
-        val selection : String? = null
-        val selectionArgs = arrayOf<String>()
-        val sortOrder : String? = null
-
-        applicationContext.contentResolver.query(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            projection,
-            selection,
-            selectionArgs,
-            sortOrder
-        )?.use { cursor ->
-            while (cursor.moveToNext()) {
-                val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-                val id = cursor.getLong(idColumn)
-                var contentUri: Uri = ContentUris.withAppendedId(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    id
-                )
-
-
-                val imgUri = Uri.parse(contentUri.toString())
-                Log.i("URI", imgUri.toString())
-                viewBinding.imageView.setImageURI(null)
-                viewBinding.imageView.setImageURI(imgUri)
-
-            }
-        }
-    }
-
-    fun createFolders()
-    {
-        val layout = findViewById<View>(org.foi.rampu.geogallery.R.id.constraintLayout) as ViewGroup
+        val layout = findViewById<View>(org.foi.rampu.geogallery.R.id.gridLayout) as ViewGroup
         val ivFolder = ImageView(this)
         ivFolder.layoutParams =
             ViewGroup.LayoutParams(
@@ -99,11 +68,11 @@ open class HomeActivity : AppCompatActivity() {
         ivFolder.layoutParams.width = 200
 
         ivFolder.setOnClickListener {
-            display_photos()
+            val intent = Intent(this, GalleryActivity::class.java)
+            startActivity(intent)
         }
 
         layout.addView(ivFolder)
-
 
     }
 }
