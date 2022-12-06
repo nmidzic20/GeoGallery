@@ -80,11 +80,15 @@ class GalleryActivity : AppCompatActivity() {
         layout.addView(imageView)
         Log.i("imgview", imageView.toString())
 
+        setImageMargins(imageView)
+
+    }
+
+    fun setImageMargins(imageView : ImageView)
+    {
         val param = imageView.layoutParams as ViewGroup.MarginLayoutParams
         param.setMargins(20,20,20,20)
         imageView.layoutParams = param
-
-
     }
 
 }

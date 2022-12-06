@@ -1,17 +1,16 @@
 package org.foi.rampu.geogallery
 
-import android.content.ContentUris
+import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Icon
-import android.net.Uri
+import android.graphics.Color
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
+import androidx.core.graphics.toColor
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.ktx.auth
@@ -22,6 +21,21 @@ import org.foi.rampu.geogallery.databinding.ActivityHomeBinding
 open class HomeActivity : AppCompatActivity() {
 
     private lateinit var viewBinding: ActivityHomeBinding
+
+    enum class ColourType(val color: Int) {
+        RED(R.color.red),
+        BLUE(R.color.blue),
+        YELLOW(R.color.yellow),
+        GREEN(R.color.green),
+        ORANGE(R.color.orange),
+        PURPLE(R.color.purple_200);
+
+        fun toColour(context: Context) =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                context.resources.getColor(color, null)
+            else
+                context.resources.getColor(color)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,13 +60,15 @@ open class HomeActivity : AppCompatActivity() {
 
         }
 
-        for (i in 1..10)
-            createFolderIcon()
+        for (i in 0..10)
+        {
+            createFolderIcon(i)
+        }
 
     }
 
 
-    fun createFolderIcon()
+    fun createFolderIcon(index : Int)
     {
         val layout = findViewById<View>(org.foi.rampu.geogallery.R.id.gridLayout) as ViewGroup
         val ivFolder = ImageView(this)
@@ -63,7 +79,10 @@ open class HomeActivity : AppCompatActivity() {
                 )
 
         ivFolder.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_folder))
-        ivFolder.setColorFilter(R.color.blue)
+
+        //ivFolder.setColorFilter(R.color.blue)
+        colourFolder(ivFolder, index)
+
         ivFolder.layoutParams.height = 200
         ivFolder.layoutParams.width = 200
 
@@ -74,5 +93,15 @@ open class HomeActivity : AppCompatActivity() {
 
         layout.addView(ivFolder)
 
+    }
+
+    fun colourFolder(ivFolder : ImageView, i : Int)
+    {
+        var index = i % ColourType.values().size
+
+        var colorId = ColourType.values()[index].color
+        val color = resources.getColor(colorId)
+
+        ivFolder.setColorFilter(color)
     }
 }
