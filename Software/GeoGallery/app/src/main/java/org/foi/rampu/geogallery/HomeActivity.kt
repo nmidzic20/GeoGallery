@@ -2,11 +2,16 @@ package org.foi.rampu.geogallery
 
 import android.content.ContentUris
 import android.content.Intent
+import android.graphics.drawable.Icon
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.ktx.auth
@@ -14,7 +19,7 @@ import com.google.firebase.ktx.Firebase
 import org.foi.rampu.geogallery.databinding.ActivityHomeBinding
 
 
-class HomeActivity : AppCompatActivity() {
+open class HomeActivity : AppCompatActivity() {
 
     private lateinit var viewBinding: ActivityHomeBinding
 
@@ -41,7 +46,8 @@ class HomeActivity : AppCompatActivity() {
 
         }
 
-        display_photos()
+        //display_photos()
+        for (i in 1..3) createFolders()
 
     }
 
@@ -75,5 +81,29 @@ class HomeActivity : AppCompatActivity() {
 
             }
         }
+    }
+
+    fun createFolders()
+    {
+        val layout = findViewById<View>(org.foi.rampu.geogallery.R.id.constraintLayout) as ViewGroup
+        val ivFolder = ImageView(this)
+        ivFolder.layoutParams =
+            ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                )
+
+        ivFolder.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_folder))
+        ivFolder.setColorFilter(R.color.blue)
+        ivFolder.layoutParams.height = 200
+        ivFolder.layoutParams.width = 200
+
+        ivFolder.setOnClickListener {
+            display_photos()
+        }
+
+        layout.addView(ivFolder)
+
+
     }
 }
