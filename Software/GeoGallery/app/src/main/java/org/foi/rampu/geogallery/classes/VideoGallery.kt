@@ -1,6 +1,7 @@
 package org.foi.rampu.geogallery.classes
 
 import android.content.ContentUris
+import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
@@ -78,11 +79,12 @@ class VideoGallery(val activity: GalleryActivity) {
 
         //surround image view & video view with framelayout, image view is for thumbnail
         //when user clicks play, image view -> invisible, video view -> visible & opposite for stop
-        createThumbnail(thumbnail, videoView, layout)
+        //changed logic to - go to full screen when playing, so no need to hide thumbnail
+        createThumbnail(thumbnail, videoView, layout, videoUri)
 
     }
 
-    fun createThumbnail(thumbnail: Bitmap, videoView: VideoView, layout: ViewGroup)
+    fun createThumbnail(thumbnail: Bitmap, videoView: VideoView, layout: ViewGroup, videoUri: Uri)
     {
         val frameLayout = FrameLayout(activity)
         frameLayout.layoutParams =
@@ -136,26 +138,24 @@ class VideoGallery(val activity: GalleryActivity) {
 
         setVideoMargins(frameLayout)
 
-        setPlayOrPauseLogic(playIcon, videoView, ivThumbnail)
+        setPlayOrPauseLogic(playIcon, ivThumbnail, videoView, videoUri)
 
     }
 
-    fun setPlayOrPauseLogic(playIcon : ImageView, videoView : VideoView, ivThumbnail : ImageView)
+    fun setPlayOrPauseLogic(playIcon : ImageView, ivThumbnail : ImageView, videoView : VideoView, videoUri : Uri)
     {
         ivThumbnail.setOnClickListener {
 
-            //click will register only if ivThumbnail visible
-            videoView.isInvisible = false
-            playIcon.isInvisible = true
-            ivThumbnail.isInvisible = true
+            //go to full screen to play
+            activity.startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    videoUri
+                )
+            )
             videoView.start()
         }
 
-        videoView.setOnCompletionListener {
-            playIcon.isInvisible = false
-            ivThumbnail.isInvisible = false
-            videoView.isInvisible = true
-        }
     }
 
     fun setVideoMargins(frameLayout : FrameLayout)

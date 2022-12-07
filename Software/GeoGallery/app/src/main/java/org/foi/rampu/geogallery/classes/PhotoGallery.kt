@@ -1,13 +1,17 @@
 package org.foi.rampu.geogallery.classes
 
 import android.content.ContentUris
+import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.core.content.ContextCompat.startActivity
 import org.foi.rampu.geogallery.GalleryActivity
+
 
 class PhotoGallery(val activity: GalleryActivity) {
 
@@ -59,6 +63,14 @@ class PhotoGallery(val activity: GalleryActivity) {
 
         imageView.setOnClickListener {
             Toast.makeText(activity, "photo, location info", Toast.LENGTH_SHORT).show()
+
+            //display image full size using android default gallery image viewer
+            activity.startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    imgUri
+                )
+            )
         }
 
         layout.addView(imageView)
