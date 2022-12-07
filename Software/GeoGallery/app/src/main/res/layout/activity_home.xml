@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:rowCount="5"
-            android:columnCount="5"
+            android:columnCount="4"
             android:id="@+id/gridLayout"
             tools:context=".MainActivity">
 

@@ -21,7 +21,7 @@ import org.foi.rampu.geogallery.databinding.ActivityHomeBinding
 
 class HomeActivity : AppCompatActivity() {
 
-    private lateinit var viewBinding: ActivityHomeBinding
+    lateinit var viewBinding: ActivityHomeBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
