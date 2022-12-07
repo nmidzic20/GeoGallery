@@ -5,17 +5,14 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.ContactsContract.CommonDataKinds.Im
 import android.provider.MediaStore
 import android.util.Log
 import android.util.Size
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.GridLayout
-import android.widget.ImageView
-import android.widget.MediaController
-import android.widget.Toast
-import android.widget.VideoView
+import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isInvisible
@@ -119,16 +116,14 @@ class GalleryActivity : AppCompatActivity() {
         videoView.isInvisible = true
         //videoView.scal = ImageView.ScaleType.FIT_XY FIX VIDEO SIZE
 
-        //surround image view & video view with framelayout, image view is for thumbnail
-        //when user clicks play, image view -> invisible, video view -> visible & opposite for stop
-        createThumbnail(thumbnail, videoView, layout)
-
         Log.i("videoview", videoView.toString())
-
-        setVideoMargins(videoView)
 
         val mediaController = MediaController(this)
         videoView.setMediaController(mediaController)
+
+        //surround image view & video view with framelayout, image view is for thumbnail
+        //when user clicks play, image view -> invisible, video view -> visible & opposite for stop
+        createThumbnail(thumbnail, videoView, layout)
 
         //videoView.start();
         //imageView.setImageBitmap(ThumbnailUtils.createVideoThumbnail(urlPath, MediaStore.Video.Thumbnails.MICRO_KIND))
@@ -140,9 +135,9 @@ class GalleryActivity : AppCompatActivity() {
     {
         val frameLayout = FrameLayout(this)
         frameLayout.layoutParams =
-            ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
+            FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT,
             )
 
         val ivThumbnail = ImageView(this)
@@ -155,36 +150,52 @@ class GalleryActivity : AppCompatActivity() {
         ivThumbnail.layoutParams.width = 500
         ivThumbnail.scaleType = ImageView.ScaleType.FIT_XY
         ivThumbnail.setImageBitmap(thumbnail)
-        ivThumbnail.setColorFilter(R.color.blue)
 
-        /*val playIcon = ImageView(this)
+        val playIcon = ImageView(this)
         playIcon.layoutParams =
             ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
             )
-        playIcon.layoutParams.height = 500
-        playIcon.layoutParams.width = 500
+        playIcon.layoutParams.height = 200
+        playIcon.layoutParams.width = 200
         playIcon.scaleType = ImageView.ScaleType.FIT_XY
-        playIcon.setImageBitmap(thumbnail)
-        playIcon.setColorFilter(R.color.blue)*/
+        playIcon.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_play_arrow))
 
         frameLayout.addView(ivThumbnail)
+        frameLayout.addView(playIcon)
         frameLayout.addView(videoView)
         layout.addView(frameLayout)
 
-        //margins
-        /*val param = frameLayout.layoutParams as ViewGroup.MarginLayoutParams
-        param.setMargins(20,20,20,20)
-        frameLayout.layoutParams = param*/
+        setVideoMargins(frameLayout)
+
+        setPlayOrPauseLogic(playIcon, videoView, ivThumbnail)
+
     }
 
-
-    fun setVideoMargins(videoView : VideoView)
+    fun setPlayOrPauseLogic(playIcon : ImageView, videoView : VideoView, ivThumbnail : ImageView)
     {
-        val param = videoView.layoutParams as ViewGroup.MarginLayoutParams
+        ivThumbnail.setOnClickListener {
+
+            //click will register only if ivThumbnail visible
+            videoView.isInvisible = false
+            playIcon.isInvisible = true
+            ivThumbnail.isInvisible = true
+            videoView.start()
+        }
+
+        videoView.setOnCompletionListener {
+            playIcon.isInvisible = false
+            ivThumbnail.isInvisible = false
+            videoView.isInvisible = true
+        }
+    }
+
+    fun setVideoMargins(frameLayout : FrameLayout)
+    {
+        val param = frameLayout.layoutParams as ViewGroup.MarginLayoutParams
         param.setMargins(20,20,20,20)
-        videoView.layoutParams = param
+        frameLayout.layoutParams = param
     }
 
     fun createImageView(imgUri : Uri)
