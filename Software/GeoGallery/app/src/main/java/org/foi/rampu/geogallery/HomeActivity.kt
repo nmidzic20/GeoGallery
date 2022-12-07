@@ -1,12 +1,21 @@
 package org.foi.rampu.geogallery
 
+import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.core.graphics.toColor
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import org.foi.rampu.geogallery.classes.FolderManager
 import org.foi.rampu.geogallery.databinding.ActivityHomeBinding
 
 
@@ -23,6 +32,7 @@ class HomeActivity : AppCompatActivity() {
             val intent = Intent(this, CameraActivity::class.java)
             startActivity(intent)
         }
+
         viewBinding.btnLogout.setOnClickListener{
             val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -34,6 +44,15 @@ class HomeActivity : AppCompatActivity() {
 
             Firebase.auth.signOut()
             startActivity(Intent(applicationContext, MainActivity::class.java))
+
         }
+
+        val folderManager = FolderManager(this)
+        for (i in 0..10)
+        {
+            folderManager.createFolderIcon(i)
+        }
+
     }
+
 }
