@@ -9,45 +9,16 @@ import android.util.Log
 import android.util.Size
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.MediaController
+import android.widget.VideoView
 import androidx.annotation.RequiresApi
 import androidx.core.view.isInvisible
 import org.foi.rampu.geogallery.GalleryActivity
-import org.foi.rampu.geogallery.HomeActivity
 import org.foi.rampu.geogallery.R
 
-
-class MediaGallery(val activity: GalleryActivity) {
-
-    fun display_photos()
-    {
-        val projection = arrayOf(MediaStore.Images.Media._ID)
-        val selection : String? = null
-        val selectionArgs = arrayOf<String>()
-        val sortOrder : String? = null
-
-        activity.applicationContext.contentResolver.query(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            projection,
-            selection,
-            selectionArgs,
-            sortOrder
-        )?.use { cursor ->
-            while (cursor.moveToNext()) {
-                val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-                val id = cursor.getLong(idColumn)
-                var contentUri: Uri = ContentUris.withAppendedId(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    id
-                )
-
-                val imgUri = Uri.parse(contentUri.toString())
-                Log.i("URI", imgUri.toString())
-                createImageView(imgUri)
-
-            }
-        }
-    }
+class VideoGallery(val activity: GalleryActivity) {
 
     @RequiresApi(Build.VERSION_CODES.Q)
     fun display_videos()
@@ -79,7 +50,6 @@ class MediaGallery(val activity: GalleryActivity) {
 
                 createVideoView(videoUri, thumbnail)
 
-
             }
         }
 
@@ -100,7 +70,6 @@ class MediaGallery(val activity: GalleryActivity) {
         videoView.layoutParams.height = 500
         videoView.layoutParams.width = 500
         videoView.isInvisible = true
-        //videoView.scal = ImageView.ScaleType.FIT_XY FIX VIDEO SIZE
 
         Log.i("videoview", videoView.toString())
 
@@ -110,10 +79,6 @@ class MediaGallery(val activity: GalleryActivity) {
         //surround image view & video view with framelayout, image view is for thumbnail
         //when user clicks play, image view -> invisible, video view -> visible & opposite for stop
         createThumbnail(thumbnail, videoView, layout)
-
-        //videoView.start();
-        //imageView.setImageBitmap(ThumbnailUtils.createVideoThumbnail(urlPath, MediaStore.Video.Thumbnails.MICRO_KIND))
-        //bitmap = ThumbnailUtils.createVideoThumbnail(getRealPathFromURI(videoUri), MediaStore.Images.Thumbnails.MINI_KIND);
 
     }
 
@@ -199,42 +164,4 @@ class MediaGallery(val activity: GalleryActivity) {
         param.setMargins(20,20,20,20)
         frameLayout.layoutParams = param
     }
-
-    fun createImageView(imgUri : Uri)
-    {
-        val layout = activity.findViewById<View>(org.foi.rampu.geogallery.R.id.gridLayout) as ViewGroup
-        val imageView = ImageView(activity)
-        imageView.layoutParams =
-            ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-            )
-
-
-        imageView.setImageURI(null)
-        imageView.setImageURI(imgUri)
-        imageView.layoutParams.height = 500
-        imageView.layoutParams.width = 500
-        imageView.scaleType = ImageView.ScaleType.FIT_XY
-
-        imageView.setOnClickListener {
-            Toast.makeText(activity, "photo, location info", Toast.LENGTH_SHORT).show()
-        }
-
-        layout.addView(imageView)
-        Log.i("imgview", imageView.toString())
-
-        setImageMargins(imageView)
-
-    }
-
-    fun setImageMargins(imageView : ImageView)
-    {
-        val param = imageView.layoutParams as ViewGroup.MarginLayoutParams
-        param.setMargins(20,20,20,20)
-        imageView.layoutParams = param
-    }
-
-
-
 }
