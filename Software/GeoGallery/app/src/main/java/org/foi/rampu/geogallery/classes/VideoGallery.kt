@@ -3,11 +3,13 @@ package org.foi.rampu.geogallery.classes
 import android.content.ContentUris
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
 import android.util.Size
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -60,11 +62,7 @@ class VideoGallery(val activity: GalleryActivity) {
     {
         val layout = activity.findViewById<View>(org.foi.rampu.geogallery.R.id.gridLayout) as ViewGroup
         val videoView = VideoView(activity)
-        videoView.layoutParams =
-            ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-            )
+        videoView.layoutParams = createLayoutParams()
 
         videoView.setVideoURI(null)
         videoView.setVideoURI(videoUri)
@@ -82,6 +80,7 @@ class VideoGallery(val activity: GalleryActivity) {
         //changed logic to - go to full screen when playing, so no need to hide thumbnail
         createThumbnail(thumbnail, videoView, layout, videoUri)
 
+
     }
 
     fun createThumbnail(thumbnail: Bitmap, videoView: VideoView, layout: ViewGroup, videoUri: Uri)
@@ -93,45 +92,14 @@ class VideoGallery(val activity: GalleryActivity) {
                 FrameLayout.LayoutParams.WRAP_CONTENT,
             )
 
-        val ivThumbnail = ImageView(activity)
-        ivThumbnail.layoutParams =
-            ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-            )
-        ivThumbnail.layoutParams.height = 500
-        ivThumbnail.layoutParams.width = 500
-        ivThumbnail.scaleType = ImageView.ScaleType.FIT_XY
-        ivThumbnail.setImageBitmap(thumbnail)
+        val ivThumbnail = createThumbnailImageView(thumbnail)
+        val playIcon = createPlayIconImageView()
+        val playIconWhiteBackground = createPlayIconWhiteBackground()
 
-        val playIcon = ImageView(activity)
-        playIcon.layoutParams =
-            ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-            )
-        playIcon.layoutParams.height = 200
-        playIcon.layoutParams.width = 200
-        playIcon.scaleType = ImageView.ScaleType.FIT_XY
-        playIcon.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_baseline_play_arrow))
-
-        /*to make video play in full size of video view
-        val relativeLayout = RelativeLayout(this)
-        relativeLayout.layoutParams =
-            RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT,
-            )
-
-        relativeLayout.addView(videoView)
-        val relLay = videoView.layoutParams as RelativeLayout.LayoutParams
-        relLay.addRule(RelativeLayout.ALIGN_PARENT_RIGHT)
-        relLay.addRule(RelativeLayout.ALIGN_PARENT_LEFT)
-        relLay.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-        relLay.addRule(RelativeLayout.ALIGN_PARENT_TOP)
-        videoView.layoutParams = relLay //causes layout update*/
+        centerPlayIcon(frameLayout, playIcon, playIconWhiteBackground)
 
         frameLayout.addView(ivThumbnail)
+        frameLayout.addView(playIconWhiteBackground)
         frameLayout.addView(playIcon)
         frameLayout.addView(videoView)
         layout.addView(frameLayout)
@@ -163,5 +131,52 @@ class VideoGallery(val activity: GalleryActivity) {
         val param = frameLayout.layoutParams as ViewGroup.MarginLayoutParams
         param.setMargins(20,20,20,20)
         frameLayout.layoutParams = param
+    }
+
+    fun createThumbnailImageView(thumbnail : Bitmap) : ImageView
+    {
+        val ivThumbnail = ImageView(activity)
+        ivThumbnail.layoutParams = createLayoutParams()
+        ivThumbnail.layoutParams.height = 500
+        ivThumbnail.layoutParams.width = 500
+        ivThumbnail.scaleType = ImageView.ScaleType.FIT_XY
+        ivThumbnail.setImageBitmap(thumbnail)
+        return ivThumbnail
+    }
+
+    fun createPlayIconImageView() : ImageView
+    {
+        val playIcon = ImageView(activity)
+        playIcon.layoutParams = createLayoutParams()
+        playIcon.layoutParams.height = 300
+        playIcon.layoutParams.width = 300
+        playIcon.scaleType = ImageView.ScaleType.FIT_XY
+        //playIcon.scaleType=ImageView.ScaleType.FIT_CENTER
+        playIcon.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_baseline_play_button))
+        return playIcon
+    }
+
+    fun createPlayIconWhiteBackground() : ImageView
+    {
+        val playIconWhiteBackground = ImageView(activity)
+        playIconWhiteBackground.layoutParams = createLayoutParams()
+        playIconWhiteBackground.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_baseline_play_arrow_24))
+        return playIconWhiteBackground
+    }
+
+    fun createLayoutParams() : ViewGroup.LayoutParams
+    {
+        return ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+        )
+    }
+
+    fun centerPlayIcon(frameLayout: FrameLayout, playIcon: ImageView, playIconWhiteBackground : ImageView)
+    {
+        val param = frameLayout.layoutParams as FrameLayout.LayoutParams
+        param.gravity = Gravity.CENTER
+        playIcon.layoutParams = param
+        playIconWhiteBackground.layoutParams = param
     }
 }

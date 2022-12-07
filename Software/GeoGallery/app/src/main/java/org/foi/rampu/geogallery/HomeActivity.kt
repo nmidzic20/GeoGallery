@@ -50,7 +50,7 @@ class HomeActivity : AppCompatActivity() {
         val folderManager = FolderManager(this)
         for (i in 0..10)
         {
-            folderManager.createFolderIcon(i)
+            folderManager.createFolderIcon("Lokacija")
         }
 
     }
