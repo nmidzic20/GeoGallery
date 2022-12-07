@@ -18,7 +18,7 @@ import com.google.firebase.ktx.Firebase
 import org.foi.rampu.geogallery.databinding.ActivityHomeBinding
 
 
-open class HomeActivity : AppCompatActivity() {
+class HomeActivity : AppCompatActivity() {
 
     private lateinit var viewBinding: ActivityHomeBinding
 
@@ -80,7 +80,6 @@ open class HomeActivity : AppCompatActivity() {
 
         ivFolder.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_folder))
 
-        //ivFolder.setColorFilter(R.color.blue)
         colourFolder(ivFolder, index)
 
         ivFolder.layoutParams.height = 200
