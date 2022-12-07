@@ -23,7 +23,7 @@ class FolderManager(val activity: HomeActivity) {
         PURPLE(R.color.purple_200)
     }
 
-    fun createFolderIcon(index : Int)
+    fun createFolderIcon(locationName: String)
     {
         val layout = activity.viewBinding.gridLayout as ViewGroup
 
@@ -35,8 +35,8 @@ class FolderManager(val activity: HomeActivity) {
             )
         linearLayout.orientation = LinearLayout.VERTICAL
 
-        val ivFolder = createFolderImage(index)
-        val tvFolderName = createLocationName()
+        val ivFolder = createFolderImage()
+        val tvFolderName = createLocationName(locationName)
 
         ivFolder.tag = tvFolderName.text.toString()
 
@@ -46,7 +46,7 @@ class FolderManager(val activity: HomeActivity) {
         layout.addView(linearLayout)
     }
 
-    fun createFolderImage(index : Int) : ImageView
+    fun createFolderImage() : ImageView
     {
         val ivFolder = ImageView(activity)
         ivFolder.layoutParams =
@@ -63,23 +63,23 @@ class FolderManager(val activity: HomeActivity) {
             activity.startActivity(intent)
         }
 
-        colourFolder(ivFolder, index)
+        colourFolder(ivFolder)
 
         return ivFolder
     }
 
-    fun createLocationName(): TextView
+    fun createLocationName(locationName : String): TextView
     {
         val tvFolderName = TextView(activity)
-        tvFolderName.text = "Lokacija"
+        tvFolderName.text = locationName
         tvFolderName.gravity = Gravity.CENTER
         tvFolderName.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12F)
         return tvFolderName
     }
 
-    fun colourFolder(ivFolder : ImageView, i : Int)
+    fun colourFolder(ivFolder : ImageView)
     {
-        var index = i % ColourType.values().size
+        var index = getFolderIconsCount() % ColourType.values().size
 
         var colorId = ColourType.values()[index].color
         val color = activity.resources.getColor(colorId)
@@ -92,4 +92,10 @@ class FolderManager(val activity: HomeActivity) {
         val folderIcon : ImageView? = activity.viewBinding.gridLayout.findViewWithTag(location)
         return folderIcon != null
     }
+
+    fun getFolderIconsCount() : Int
+    {
+        return activity.viewBinding.gridLayout.childCount
+    }
+
 }

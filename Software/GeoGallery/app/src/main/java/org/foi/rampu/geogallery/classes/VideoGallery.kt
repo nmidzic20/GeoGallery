@@ -3,6 +3,7 @@ package org.foi.rampu.geogallery.classes
 import android.content.ContentUris
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
@@ -110,10 +111,12 @@ class VideoGallery(val activity: GalleryActivity) {
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
             )
-        playIcon.layoutParams.height = 200
-        playIcon.layoutParams.width = 200
+        playIcon.layoutParams.height = 150
+        playIcon.layoutParams.width = 150
         playIcon.scaleType = ImageView.ScaleType.FIT_XY
-        playIcon.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_baseline_play_arrow))
+
+        playIcon.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_baseline_play_button))
+        playIcon.setColorFilter(R.color.red, PorterDuff.Mode.SRC_IN)
 
         /*to make video play in full size of video view
         val relativeLayout = RelativeLayout(this)
