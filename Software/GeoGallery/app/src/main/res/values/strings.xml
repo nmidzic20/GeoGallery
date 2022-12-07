@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">GeoGallery</string>
+    <string name="geogallery">GeoGallery</string>
+    <string name="no_account_click_to_register">No Account? Click to Register</string>
+    <string name="test">Test</string>
+    <string name="email">Email</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="e_mail">E-mail</string>
+    <string name="geogallery_login">GeoGallery Login</string>
+    <string name="no_account_click_here_to_register">No Account? Click here to register</string>
+    <string name="geogallery_register">GeoGallery Register</string>
+    <string name="register">Register</string>
+    <string name="already_have_an_account_click_here">Already have an account? Click here</string>
 </resources>
