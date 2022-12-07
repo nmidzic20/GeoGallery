@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.StrictMode
 import android.util.Log
+import android.widget.Toast
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -45,8 +46,8 @@ class MainActivity : AppCompatActivity() {
 
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
-        //firebaseAuth = Firebase.auth
-        firebaseAuth = FirebaseAuth.getInstance()
+        firebaseAuth = Firebase.auth
+        //firebaseAuth = FirebaseAuth.getInstance()
 
         viewBinding.btnSignIn.setOnClickListener{
             signInGoogle()
@@ -56,6 +57,34 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, HomeActivity::class.java))
             finish()
         }
+
+        viewBinding.btnZadnji.setOnClickListener {
+            performLogin()
+        }
+    }
+
+    private fun performLogin() {
+        val email = viewBinding.etEmail
+        val password = viewBinding.etPassword
+
+        if(email.text.isEmpty() || password.text.isEmpty()){
+            Toast.makeText(this, "Please fill alll the fileds", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val emailInput = email.text.toString()
+        val passwordInput = password.text.toString()
+
+        firebaseAuth.signInWithEmailAndPassword(emailInput,passwordInput)
+            .addOnCompleteListener(this){ task ->
+                if(task.isSuccessful){
+                    val user = firebaseAuth.currentUser
+                    updateUI()
+                }
+                else{
+                    Toast.makeText(baseContext, "Authentication failed.", Toast.LENGTH_SHORT).show()
+                }
+            }
     }
 
     private fun signInGoogle() {
