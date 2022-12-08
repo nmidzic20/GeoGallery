@@ -37,6 +37,11 @@ class MainActivity : AppCompatActivity() {
 
        viewBinding.btnLogin.setOnClickListener {
             performLogin()
+       }
+
+        viewBinding.button.setOnClickListener {
+            startActivity(Intent(this, HomeActivity::class.java))
+            finish()
         }
     }
 
