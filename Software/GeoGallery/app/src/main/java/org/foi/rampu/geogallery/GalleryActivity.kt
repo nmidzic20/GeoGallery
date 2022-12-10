@@ -7,13 +7,13 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import org.foi.rampu.geogallery.classes.PhotoGallery
 import org.foi.rampu.geogallery.classes.VideoGallery
-import org.foi.rampu.geogallery.ws.WebServis
+import org.foi.rampu.geogallery.ws.LocationInfoManager
 import org.foi.rampu.geogallery.databinding.ActivityGalleryBinding
 
 
 class GalleryActivity : AppCompatActivity() {
 
-    private lateinit var viewBinding: ActivityGalleryBinding
+    lateinit var viewBinding: ActivityGalleryBinding
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,12 +23,14 @@ class GalleryActivity : AppCompatActivity() {
 
         val photoGallery = PhotoGallery(this)
         val videoGallery = VideoGallery(this)
-        val webServis = WebServis(this)
+        val locationInfoManager = LocationInfoManager(this)
 
         photoGallery.display_photos()
         videoGallery.display_videos()
 
-        webServis.loadLocationInfo()
+        val folderName = intent.getStringExtra("FOLDER_NAME")
+
+        locationInfoManager.loadLocationInfo(folderName!!)
     }
 
 

@@ -1,6 +1,6 @@
 package org.foi.rampu.geogallery.ws
 
-data class WsLocationInfoResultList(
-    var count : Int,
-    var results : ArrayList<WsLocationInfoResult>
-)
+object WsLocationInfoResultList {
+    var count: Int = 0
+    lateinit var results: ArrayList<WsLocationInfoResult>
+}

@@ -9,5 +9,6 @@ object WsLocationInfo {
         .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
+
     val locationInfoService = instance.create(WsLocationInfoService::class.java)
 }
