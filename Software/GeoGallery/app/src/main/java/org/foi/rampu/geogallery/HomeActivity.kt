@@ -1,42 +1,46 @@
 package org.foi.rampu.geogallery
 
-import android.Manifest
+import android.content.Context
 import android.content.Intent
-import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Geocoder
+import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import org.foi.rampu.geogallery.classes.FolderManager
 import org.foi.rampu.geogallery.classes.Location
 import org.foi.rampu.geogallery.databinding.ActivityHomeBinding
-import java.io.IOException
 import java.util.*
+
 
 class HomeActivity : AppCompatActivity() {
 
     lateinit var viewBinding: ActivityHomeBinding
-
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
+    private var currentLocation: Location? = null
+    lateinit var locationManager: LocationManager
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
 
+        val location = Location(this)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        val location = Location(this,fusedLocationProviderClient)
+
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         viewBinding.getPosition.setOnClickListener {
-            location.checkLocationPermission()
+            //getUserLocation()
         }
 
         viewBinding.ibtnLocation.setOnClickListener{
@@ -66,37 +70,25 @@ class HomeActivity : AppCompatActivity() {
         {
             folderManager.createFolderIcon("Lokacija")
         }
-
     }
 
-    /*
-    private fun getUserLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
+    /*private fun getUserLocation(){
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
         ) {
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 100)
             return
         }
-        fusedLocationProviderClient.lastLocation.addOnCompleteListener{ task ->
 
-            val location = task.getResult()
+        val location = fusedLocationProviderClient.lastLocation
+        location.addOnCompleteListener{
+            if(it!= null){
+                    var geoCoder = Geocoder(this, Locale.getDefault())
+                    var Adress = geoCoder.getFromLocation(it.latitude,it.longitude,1)
 
-            if(location != null){
-                try{
-                    val geocoder = Geocoder(this, Locale.getDefault())
-                    val address = geocoder.getFromLocation(location.latitude,location.longitude,1)
-
-                    val address_line = address[0].getAddressLine(0)
-                    viewBinding.tvLocation.text=address_line
-
-
-                } catch(e: IOException){
-
-                }
+                    var city = Adress.get(0).locality
+                    //viewBinding.tvLocation.text(city)
+                    Toast.makeText(applicationContext,city,Toast.LENGTH_SHORT).show()
             }
         }
     }*/

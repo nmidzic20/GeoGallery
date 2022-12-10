@@ -9,7 +9,8 @@ import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import org.foi.rampu.geogallery.HomeActivity
 
-class Location(val activity: HomeActivity, fusedLocationProviderClient: FusedLocationProviderClient){
+class Location(val activity: HomeActivity){
+
     lateinit var locationRequest: LocationRequest
 
     fun checkLocationPermission() {
@@ -22,9 +23,9 @@ class Location(val activity: HomeActivity, fusedLocationProviderClient: FusedLoc
 
     fun checkGPS() {
         locationRequest = LocationRequest.create()
-        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        locationRequest.interval = 5000
-        locationRequest.fastestInterval = 2000
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+        locationRequest.setInterval(5000)
+        locationRequest.setFastestInterval(2000)
 
         val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
 
@@ -37,12 +38,8 @@ class Location(val activity: HomeActivity, fusedLocationProviderClient: FusedLoc
                 val response = task.getResult(
                     ApiException::class.java
                 )
-
-                //getUserLocation()
-
             }catch(e : ApiException){
                 e.printStackTrace()
-
                 when(e.statusCode){
                     LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> try{
                         val resolveApiException = e as ResolvableApiException
