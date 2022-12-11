@@ -54,17 +54,6 @@ class GalleryActivity : AppCompatActivity() {
             tab.setText(galleryPagerAdapter.fragmentItems[position].titleRes)
         }.attach()
 
-        /*val photoGallery = PhotoGallery(this)
-        val videoGallery = VideoGallery(this)
-        val locationInfoManager = LocationInfoManager(this)
-
-        photoGallery.display_photos()
-        videoGallery.display_videos()
-
-        val folderName = intent.getStringExtra("FOLDER_NAME")
-
-        locationInfoManager.loadLocationInfo(folderName!!)
-        */
     }
 
 

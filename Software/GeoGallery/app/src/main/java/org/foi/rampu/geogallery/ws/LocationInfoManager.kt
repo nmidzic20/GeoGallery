@@ -1,8 +1,10 @@
 package org.foi.rampu.geogallery.ws
 
 import android.util.Log
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.lifecycle.viewmodel.viewModelFactory
 import org.foi.rampu.geogallery.GalleryActivity
 import org.foi.rampu.geogallery.R
@@ -27,7 +29,6 @@ class LocationInfoManager(val locationInfoFragment: LocationInfoFragment) {
     fun saveLocationInfo(title : String, extract: String)
     {
         val newLocationInfo = WsLocationInfoResult(title, extract)
-        //WsLocationInfoResultList.results = ArrayList<WsLocationInfoResult>()
         WsLocationInfoResultList.results.add(newLocationInfo)
     }
 
@@ -35,7 +36,7 @@ class LocationInfoManager(val locationInfoFragment: LocationInfoFragment) {
     {
         val locationInfo = WsLocationInfoResultList.results.firstOrNull{ it.title == location }
         val paragraph = locationInfo?.extract?.split("\r?\n|\r".toRegex())?.get(0)
-        locationInfoFragment.view?.findViewById<TextView>(R.id.tvLocationInfo)?.text = paragraph
+        locationInfoFragment.view?.findViewById<TextView>(R.id.tv_location_info)?.text = paragraph
 
         return locationInfo != null;
 
@@ -73,6 +74,8 @@ class LocationInfoManager(val locationInfoFragment: LocationInfoFragment) {
 
                         saveLocationInfo(title!!,extract!!)
                         displayLocationInfo(location)
+
+                        locationInfoFragment.view?.findViewById<ProgressBar>(R.id.pb_location_info_loading)?.isVisible = false
 
                     }
                     else

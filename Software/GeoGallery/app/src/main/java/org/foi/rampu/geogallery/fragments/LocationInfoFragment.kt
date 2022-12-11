@@ -6,11 +6,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import org.foi.rampu.geogallery.R
 import org.foi.rampu.geogallery.classes.PhotoGallery
 import org.foi.rampu.geogallery.ws.LocationInfoManager
 
 class LocationInfoFragment : Fragment() {
+
+    private lateinit var loadingCircle: ProgressBar
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -19,6 +24,8 @@ class LocationInfoFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        loadingCircle = view.findViewById(R.id.pb_location_info_loading)
 
         val locationInfoManager = LocationInfoManager(this)
 
