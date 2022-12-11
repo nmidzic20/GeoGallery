@@ -47,9 +47,12 @@ class HomeActivity : AppCompatActivity() {
         }
 
         val folderManager = FolderManager(this)
-        for (i in 0..10)
+
+        val mockLocations = listOf<String>("Zagreb", "Varaždin", "Rijeka", "Graz", "Rome", "Dubrovnik",
+            "Trieste", "Venice", "Osijek", "Pula")
+        for (i in 0..9)
         {
-            folderManager.createFolderIcon("Lokacija")
+            folderManager.createFolderIcon(mockLocations[i])
         }
 
     }

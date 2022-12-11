@@ -40,6 +40,12 @@ class FolderManager(val activity: HomeActivity) {
 
         ivFolder.tag = tvFolderName.text.toString()
 
+        ivFolder.setOnClickListener {
+            val intent = Intent(activity, GalleryActivity::class.java)
+            intent.putExtra("FOLDER_NAME", tvFolderName.text)
+            activity.startActivity(intent)
+        }
+
         linearLayout.addView(ivFolder)
         linearLayout.addView(tvFolderName)
 
@@ -57,11 +63,6 @@ class FolderManager(val activity: HomeActivity) {
         ivFolder.layoutParams.height = 200
         ivFolder.layoutParams.width = 250
         ivFolder.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_baseline_folder))
-
-        ivFolder.setOnClickListener {
-            val intent = Intent(activity, GalleryActivity::class.java)
-            activity.startActivity(intent)
-        }
 
         colourFolder(ivFolder)
 
