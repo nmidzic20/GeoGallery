@@ -10,10 +10,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
+import androidx.fragment.app.FragmentActivity
 import org.foi.rampu.geogallery.GalleryActivity
+import org.foi.rampu.geogallery.fragments.GalleryFragment
 
 
-class PhotoGallery(val activity: GalleryActivity) {
+class PhotoGallery(val galleryFragment: GalleryFragment) {
 
     fun display_photos()
     {
@@ -22,7 +24,7 @@ class PhotoGallery(val activity: GalleryActivity) {
         val selectionArgs = arrayOf<String>()
         val sortOrder : String? = null
 
-        activity.applicationContext.contentResolver.query(
+        galleryFragment.activity?.applicationContext?.contentResolver?.query(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             projection,
             selection,
@@ -47,8 +49,12 @@ class PhotoGallery(val activity: GalleryActivity) {
 
     fun createImageView(imgUri : Uri)
     {
-        val layout = activity.findViewById<View>(org.foi.rampu.geogallery.R.id.gridLayout) as ViewGroup
-        val imageView = ImageView(activity)
+
+        val layout = galleryFragment.view?.findViewById<View>(org.foi.rampu.geogallery.R.id.gridLayout) as ViewGroup
+            //line below only for activities, if using findViewById for fragments, need to get it from view/getView() first!
+            //activity.findViewById<View>(org.foi.rampu.geogallery.R.id.gridLayout) as ViewGroup
+
+        val imageView = ImageView(galleryFragment.activity)
         imageView.layoutParams =
             ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -62,10 +68,9 @@ class PhotoGallery(val activity: GalleryActivity) {
         imageView.scaleType = ImageView.ScaleType.FIT_XY
 
         imageView.setOnClickListener {
-            Toast.makeText(activity, "photo, location info", Toast.LENGTH_SHORT).show()
 
             //display image full size using android default gallery image viewer
-            activity.startActivity(
+            galleryFragment.activity?.startActivity(
                 Intent(
                     Intent.ACTION_VIEW,
                     imgUri

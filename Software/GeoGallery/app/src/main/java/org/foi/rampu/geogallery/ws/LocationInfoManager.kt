@@ -64,7 +64,7 @@ class LocationInfoManager(val activity : GalleryActivity) {
     {
         val locationInfo = WsLocationInfoResultList.results.firstOrNull{ it.title == location }
         val paragraph = locationInfo?.extract?.split("\r?\n|\r".toRegex())?.get(0)
-        activity.viewBinding.tvLocationInfo.text = paragraph
+        //activity.viewBinding.tvLocationInfo.text = paragraph
 
     }
 
