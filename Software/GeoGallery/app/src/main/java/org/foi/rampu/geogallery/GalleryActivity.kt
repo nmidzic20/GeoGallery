@@ -64,8 +64,7 @@ class GalleryActivity : AppCompatActivity() {
         val folderName = intent.getStringExtra("FOLDER_NAME")
 
         locationInfoManager.loadLocationInfo(folderName!!)
-
-        also uncomment 67 in locationinfomanager*/
+        */
     }
 
 
