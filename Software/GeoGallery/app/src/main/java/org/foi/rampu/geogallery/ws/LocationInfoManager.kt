@@ -1,8 +1,10 @@
 package org.foi.rampu.geogallery.ws
 
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.viewmodel.viewModelFactory
 import org.foi.rampu.geogallery.GalleryActivity
+import org.foi.rampu.geogallery.R
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -38,13 +40,13 @@ class LocationInfoManager(val activity : GalleryActivity) {
                     }
                     else
                     {
-                        //displayWebServiceErrorMessage()
+                        displayWebServiceErrorMessage()
                         Log.i("ERR", "Greska on Response")
                     }
                 }
                 override fun onFailure(call: Call<WsResponse>?, t: Throwable?)
                 {
-                    //displayWebServiceErrorMessage()
+                    displayWebServiceErrorMessage()
                     Log.i("ERR", "Greska on Failure")
                 }
             }
@@ -58,11 +60,19 @@ class LocationInfoManager(val activity : GalleryActivity) {
         WsLocationInfoResultList.results.add(newLocationInfo)
     }
 
-    fun displayLocationInfo(location : String = "Zagreb")
+    fun displayLocationInfo(location : String)
     {
         val locationInfo = WsLocationInfoResultList.results.firstOrNull{ it.title == location }
         val paragraph = locationInfo?.extract?.split("\r?\n|\r".toRegex())?.get(0)
         activity.viewBinding.tvLocationInfo.text = paragraph
 
+    }
+
+    private fun displayWebServiceErrorMessage() {
+        Toast.makeText(
+            activity,
+            R.string.news_ws_err_msg,
+            Toast.LENGTH_LONG
+        ).show()
     }
 }
