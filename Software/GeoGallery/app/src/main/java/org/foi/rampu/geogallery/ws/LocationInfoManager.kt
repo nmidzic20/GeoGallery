@@ -15,6 +15,8 @@ import retrofit2.Response
 
 class LocationInfoManager(val locationInfoFragment: LocationInfoFragment) {
 
+    val loadingCircle = locationInfoFragment.view?.findViewById<ProgressBar>(R.id.pb_location_info_loading)
+
     fun loadLocationInfo(location: String) {
 
         //first check in WsLocationInfoResultList, then load from web if none found in list for that location
@@ -37,6 +39,9 @@ class LocationInfoManager(val locationInfoFragment: LocationInfoFragment) {
         val locationInfo = WsLocationInfoResultList.results.firstOrNull{ it.title == location }
         val paragraph = locationInfo?.extract?.split("\r?\n|\r".toRegex())?.get(0)
         locationInfoFragment.view?.findViewById<TextView>(R.id.tv_location_info)?.text = paragraph
+
+        if (locationInfo != null)
+            loadingCircle?.isVisible = false
 
         return locationInfo != null;
 
@@ -74,8 +79,6 @@ class LocationInfoManager(val locationInfoFragment: LocationInfoFragment) {
 
                         saveLocationInfo(title!!,extract!!)
                         displayLocationInfo(location)
-
-                        locationInfoFragment.view?.findViewById<ProgressBar>(R.id.pb_location_info_loading)?.isVisible = false
 
                     }
                     else

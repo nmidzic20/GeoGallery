@@ -25,8 +25,6 @@ class LocationInfoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        loadingCircle = view.findViewById(R.id.pb_location_info_loading)
-
         val locationInfoManager = LocationInfoManager(this)
 
         val folderName = activity?.intent?.getStringExtra("FOLDER_NAME")
