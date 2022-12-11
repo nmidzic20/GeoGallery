@@ -1,20 +1,57 @@
 package org.foi.rampu.geogallery.ws
 
 import android.util.Log
+import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.viewmodel.viewModelFactory
 import org.foi.rampu.geogallery.GalleryActivity
 import org.foi.rampu.geogallery.R
+import org.foi.rampu.geogallery.fragments.LocationInfoFragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class LocationInfoManager(val activity : GalleryActivity) {
-
-    private val ws = WsLocationInfo.locationInfoService
-    //var extract : String? = null
+class LocationInfoManager(val locationInfoFragment: LocationInfoFragment) {
 
     fun loadLocationInfo(location: String) {
+
+        //first check in WsLocationInfoResultList, then load from web if none found in list for that location
+        var foundLocationInfo : Boolean = displayLocationInfo(location)
+        Log.i("FOLDER", foundLocationInfo.toString())
+
+        if (!foundLocationInfo)
+            fetchLocationInfoFromWeb(location)
+
+    }
+
+    fun saveLocationInfo(title : String, extract: String)
+    {
+        val newLocationInfo = WsLocationInfoResult(title, extract)
+        //WsLocationInfoResultList.results = ArrayList<WsLocationInfoResult>()
+        WsLocationInfoResultList.results.add(newLocationInfo)
+    }
+
+    fun displayLocationInfo(location : String) : Boolean
+    {
+        val locationInfo = WsLocationInfoResultList.results.firstOrNull{ it.title == location }
+        val paragraph = locationInfo?.extract?.split("\r?\n|\r".toRegex())?.get(0)
+        locationInfoFragment.view?.findViewById<TextView>(R.id.tvLocationInfo)?.text = paragraph
+
+        return locationInfo != null;
+
+    }
+
+    private fun displayWebServiceErrorMessage() {
+        Toast.makeText(
+            locationInfoFragment.context,
+            R.string.news_ws_err_msg,
+            Toast.LENGTH_LONG
+        ).show()
+    }
+
+    fun fetchLocationInfoFromWeb(location: String)
+    {
+        val ws = WsLocationInfo.locationInfoService
 
         ws.getLocationInfo(location).enqueue(
             object : Callback<WsResponse>
@@ -31,7 +68,7 @@ class LocationInfoManager(val activity : GalleryActivity) {
                         var title = responseBody.query?.pages?.get(mapKey)?.title
                         var extract = responseBody.query?.pages?.get(mapKey)?.extract
 
-                        if (extract == null) extract = "Nije dohvaceno"
+                        if (extract == null) extract = "Not fetched"
                         Log.i("INFO", responseBody.toString())
 
                         saveLocationInfo(title!!,extract!!)
@@ -41,38 +78,15 @@ class LocationInfoManager(val activity : GalleryActivity) {
                     else
                     {
                         displayWebServiceErrorMessage()
-                        Log.i("ERR", "Greska on Response")
+                        Log.i("ERR", "On Response error")
                     }
                 }
                 override fun onFailure(call: Call<WsResponse>?, t: Throwable?)
                 {
                     displayWebServiceErrorMessage()
-                    Log.i("ERR", "Greska on Failure")
+                    Log.i("ERR", "On Failure error")
                 }
             }
         )
-    }
-
-    fun saveLocationInfo(title : String, extract: String)
-    {
-        val newLocationInfo = WsLocationInfoResult(title, extract)
-        WsLocationInfoResultList.results = ArrayList<WsLocationInfoResult>()
-        WsLocationInfoResultList.results.add(newLocationInfo)
-    }
-
-    fun displayLocationInfo(location : String)
-    {
-        val locationInfo = WsLocationInfoResultList.results.firstOrNull{ it.title == location }
-        val paragraph = locationInfo?.extract?.split("\r?\n|\r".toRegex())?.get(0)
-        activity.viewBinding.tvLocationInfo.text = paragraph
-
-    }
-
-    private fun displayWebServiceErrorMessage() {
-        Toast.makeText(
-            activity,
-            R.string.news_ws_err_msg,
-            Toast.LENGTH_LONG
-        ).show()
     }
 }
