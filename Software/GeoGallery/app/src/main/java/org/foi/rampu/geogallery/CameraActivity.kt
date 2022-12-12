@@ -20,6 +20,7 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
+import androidx.camera.core.impl.utils.Exif
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.*
 import androidx.core.app.ActivityCompat
@@ -94,25 +95,43 @@ class CameraActivity : AppCompatActivity() {
             )
             Log.i("ADDRESS LOCATION INFO SAVED", AllLocationsInfo.savedLocationInfo.get(
                 AllLocationsInfo.savedLocationInfo.lastIndex
-            ).toString())
+            ).city.toString())
 
             if (currentUri != Uri.EMPTY)
             {
+                var data = AllLocationsInfo.savedLocationInfo.get(
+                        AllLocationsInfo.savedLocationInfo.lastIndex
+                    ).city.toString()
+                var exifData = ExifInterface(this.contentResolver.openFileDescriptor(currentUri, "rw", null)!!.fileDescriptor)
+                exifData.setAttribute("UserComment", data.toString())
+                exifData.saveAttributes()
+
+                Log.i("ADDRESS EXIF 1", getTagString("UserComment", exifData).toString())
+
+
+
+
                 /*currentUri = MediaStore.setRequireOriginal(currentUri)
                 contentResolver.openInputStream(currentUri)?.use { stream ->
                     ExifInterface(stream).run {
-                        // If lat/long is null, fall back to the coordinates (0, 0).
-                        val latLong : FloatArray = FloatArray(2)
-                        this.getLatLong(latLong)
+                        this.setAttribute(ExifInterface.TAG_SUBJECT_LOCATION, AllLocationsInfo.savedLocationInfo.get(
+                                AllLocationsInfo.savedLocationInfo.lastIndex
+                            ).city.toString()
+                        )
+                        this.saveAttributes()
 
-                        //Log.i("ADDRESS OH MY GOD", getAddress(latLong))
+                        Log.i("ADDRESS EXIF 1", getTagString(ExifInterface.TAG_SUBJECT_LOCATION, this).toString())
+
+                        ShowExif(this)
+
+
                     }
                 }*/
 
-                var file : File = File(currentUri.path)
+                //var file : File = File(currentUri.path)
                 //var exif : ExifInterface = ExifInterface(file)
                 //var res = ShowExif(exif)
-                Log.i("ADDRESS EXIF", file.toString())
+                //Log.i("ADDRESS EXIF", file.toString())
 
             }
 
@@ -152,7 +171,7 @@ class CameraActivity : AppCompatActivity() {
     private fun ShowExif(exif: ExifInterface) : String?
     {
         var myAttribute: String? = "Exif information ---\n"
-        myAttribute += getTagString(ExifInterface.TAG_DATETIME, exif)
+        /*myAttribute += getTagString(ExifInterface.TAG_DATETIME, exif)
         myAttribute += getTagString(ExifInterface.TAG_FLASH, exif)
         myAttribute += getTagString(ExifInterface.TAG_GPS_LATITUDE, exif)
         myAttribute += getTagString(ExifInterface.TAG_GPS_LATITUDE_REF, exif)
@@ -163,7 +182,10 @@ class CameraActivity : AppCompatActivity() {
         myAttribute += getTagString(ExifInterface.TAG_MAKE, exif)
         myAttribute += getTagString(ExifInterface.TAG_MODEL, exif)
         myAttribute += getTagString(ExifInterface.TAG_ORIENTATION, exif)
-        myAttribute += getTagString(ExifInterface.TAG_WHITE_BALANCE, exif)
+        myAttribute += getTagString(ExifInterface.TAG_WHITE_BALANCE, exif)*/
+        myAttribute += getTagString(ExifInterface.TAG_SUBJECT_LOCATION, exif)
+
+        Log.i("ADDRESS EXIF", myAttribute.toString())
 
         return myAttribute
     }
