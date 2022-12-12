@@ -58,6 +58,11 @@ class HomeActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        viewBinding.ibtnAudio.setOnClickListener {
+            val intent = Intent(this, AudioActivity::class.java)
+            startActivity(intent)
+        }
+
         viewBinding.btnLogout.setOnClickListener{
             val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
