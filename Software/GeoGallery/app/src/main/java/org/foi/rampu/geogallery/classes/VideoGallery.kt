@@ -20,8 +20,9 @@ import androidx.annotation.RequiresApi
 import androidx.core.view.isInvisible
 import org.foi.rampu.geogallery.GalleryActivity
 import org.foi.rampu.geogallery.R
+import org.foi.rampu.geogallery.fragments.GalleryFragment
 
-class VideoGallery(val activity: GalleryActivity) {
+class VideoGallery(val galleryFragment: GalleryFragment) {
 
     @RequiresApi(Build.VERSION_CODES.Q)
     fun display_videos()
@@ -31,7 +32,7 @@ class VideoGallery(val activity: GalleryActivity) {
         val selectionArgs = arrayOf<String>()
         val sortOrder : String? = null
 
-        activity.applicationContext.contentResolver.query(
+        galleryFragment.activity?.applicationContext?.contentResolver?.query(
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
             projection,
             selection,
@@ -49,7 +50,7 @@ class VideoGallery(val activity: GalleryActivity) {
                 val videoUri = Uri.parse(contentUri.toString())
                 Log.i("URI", videoUri.toString())
 
-                val thumbnail = activity.applicationContext.contentResolver.loadThumbnail(videoUri, Size(500, 500), null)
+                val thumbnail = galleryFragment.requireActivity().applicationContext.contentResolver.loadThumbnail(videoUri, Size(500, 500), null)
 
                 createVideoView(videoUri, thumbnail)
 
@@ -60,8 +61,8 @@ class VideoGallery(val activity: GalleryActivity) {
 
     fun createVideoView(videoUri : Uri, thumbnail : Bitmap)
     {
-        val layout = activity.findViewById<View>(org.foi.rampu.geogallery.R.id.gridLayout) as ViewGroup
-        val videoView = VideoView(activity)
+        val layout = galleryFragment.view?.findViewById<View>(org.foi.rampu.geogallery.R.id.gridLayout) as ViewGroup
+        val videoView = VideoView(galleryFragment.activity)
         videoView.layoutParams = createLayoutParams()
 
         videoView.setVideoURI(null)
@@ -72,7 +73,7 @@ class VideoGallery(val activity: GalleryActivity) {
 
         Log.i("videoview", videoView.toString())
 
-        val mediaController = MediaController(activity)
+        val mediaController = MediaController(galleryFragment.activity)
         videoView.setMediaController(mediaController)
 
         //surround image view & video view with framelayout, image view is for thumbnail
@@ -85,8 +86,8 @@ class VideoGallery(val activity: GalleryActivity) {
 
     fun createThumbnail(thumbnail: Bitmap, videoView: VideoView, layout: ViewGroup, videoUri: Uri)
     {
-        val frameLayout = FrameLayout(activity)
-        frameLayout.layoutParams =
+        val frameLayout = galleryFragment.context?.let { FrameLayout(it) }
+        frameLayout?.layoutParams =
             FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.WRAP_CONTENT,
                 FrameLayout.LayoutParams.WRAP_CONTENT,
@@ -96,7 +97,7 @@ class VideoGallery(val activity: GalleryActivity) {
         val playIcon = createPlayIconImageView()
         val playIconWhiteBackground = createPlayIconWhiteBackground()
 
-        centerPlayIcon(frameLayout, playIcon, playIconWhiteBackground)
+        centerPlayIcon(frameLayout!!, playIcon, playIconWhiteBackground)
 
         frameLayout.addView(ivThumbnail)
         frameLayout.addView(playIconWhiteBackground)
@@ -115,7 +116,7 @@ class VideoGallery(val activity: GalleryActivity) {
         ivThumbnail.setOnClickListener {
 
             //go to full screen to play
-            activity.startActivity(
+            galleryFragment.activity?.startActivity(
                 Intent(
                     Intent.ACTION_VIEW,
                     videoUri
@@ -135,7 +136,7 @@ class VideoGallery(val activity: GalleryActivity) {
 
     fun createThumbnailImageView(thumbnail : Bitmap) : ImageView
     {
-        val ivThumbnail = ImageView(activity)
+        val ivThumbnail = ImageView(galleryFragment.activity)
         ivThumbnail.layoutParams = createLayoutParams()
         ivThumbnail.layoutParams.height = 500
         ivThumbnail.layoutParams.width = 500
@@ -146,21 +147,21 @@ class VideoGallery(val activity: GalleryActivity) {
 
     fun createPlayIconImageView() : ImageView
     {
-        val playIcon = ImageView(activity)
+        val playIcon = ImageView(galleryFragment.activity)
         playIcon.layoutParams = createLayoutParams()
         playIcon.layoutParams.height = 300
         playIcon.layoutParams.width = 300
         playIcon.scaleType = ImageView.ScaleType.FIT_XY
         //playIcon.scaleType=ImageView.ScaleType.FIT_CENTER
-        playIcon.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_baseline_play_button))
+        playIcon.setImageDrawable(galleryFragment.activity?.resources?.getDrawable(R.drawable.ic_baseline_play_button))
         return playIcon
     }
 
     fun createPlayIconWhiteBackground() : ImageView
     {
-        val playIconWhiteBackground = ImageView(activity)
+        val playIconWhiteBackground = ImageView(galleryFragment.activity)
         playIconWhiteBackground.layoutParams = createLayoutParams()
-        playIconWhiteBackground.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_baseline_play_arrow_24))
+        playIconWhiteBackground.setImageDrawable(galleryFragment.activity?.resources?.getDrawable(R.drawable.ic_baseline_play_arrow_24))
         return playIconWhiteBackground
     }
 
