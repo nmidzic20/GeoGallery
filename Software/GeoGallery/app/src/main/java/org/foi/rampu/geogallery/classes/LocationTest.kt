@@ -4,18 +4,21 @@ import android.Manifest
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Geocoder
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import org.foi.rampu.geogallery.HomeActivity
 import java.util.*
+import javax.security.auth.callback.Callback
 
 class LocationTest(val activity: HomeActivity){
 
     lateinit var locationRequest: LocationRequest
     var country = ""
     var city = ""
+    var street = ""
 
     fun checkLocationPermission() : Boolean{
         if(ActivityCompat.checkSelfPermission(activity,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
@@ -27,7 +30,6 @@ class LocationTest(val activity: HomeActivity){
             return false
         }
     }
-
 
     fun checkGPS() {
         locationRequest = LocationRequest()
@@ -62,32 +64,76 @@ class LocationTest(val activity: HomeActivity){
         }
     }
 
-    fun CountryName(fusedLocationProviderClient: FusedLocationProviderClient) : String {
+    fun countryName(fusedLocationProviderClient: FusedLocationProviderClient) : String {
         if(checkLocationPermission()) {
             val task = fusedLocationProviderClient.lastLocation
             task.addOnCompleteListener {
-                if (it != null) {
+                if (it != null && task.result != null) {
                     val geoCoder = Geocoder(activity, Locale.getDefault())
                     val adress = geoCoder.getFromLocation(task.result.latitude, task.result.longitude, 1)
                     country = adress[0].countryName
+                    Log.i("ADDRESS", (adress + " " + country).toString())
+                    object: Callback {}.run {
+                        Log.i("ADDRESS CALLBACK", country)
+                        activity.locationInfo.value = mutableMapOf(
+                            "country" to country,
+                            "city" to activity.locationInfo.value?.get("city").toString(),
+                            "street" to activity.locationInfo.value?.get("street").toString()
+                        )
+                    }
                 }
             }
         }
         return country
     }
 
-    fun CityName(fusedLocationProviderClient: FusedLocationProviderClient) : String {
+    fun cityName(fusedLocationProviderClient: FusedLocationProviderClient) : String {
         if(checkLocationPermission()) {
             val task = fusedLocationProviderClient.lastLocation
             task.addOnCompleteListener {
-                if(task != null) {
+                if(task?.result != null) {
                     val geoCoder = Geocoder(activity, Locale.getDefault())
                     val adress = geoCoder.getFromLocation(task.result.latitude, task.result.longitude, 1)
-                    city = adress[0].locality
+                    city = if (adress[0].locality != null)
+                        adress[0].locality
+                        else
+                            adress[0].subAdminArea
+                    object: Callback {}.run {
+                        Log.i("ADDRESS CALLBACK", city)
+                        activity.locationInfo.value = mutableMapOf(
+                            "country" to activity.locationInfo.value?.get("country").toString(),
+                            "city" to city,
+                            "street" to activity.locationInfo.value?.get("street").toString()
+                        )
+                    }
                 }
             }
         }
         return city
+    }
+    fun streetName(fusedLocationProviderClient: FusedLocationProviderClient) : String{
+        if(checkLocationPermission()) {
+            val task = fusedLocationProviderClient.lastLocation
+            task.addOnCompleteListener {
+                if(task?.result != null) {
+                    val geoCoder = Geocoder(activity, Locale.getDefault())
+                    val adress = geoCoder.getFromLocation(task.result.latitude, task.result.longitude, 1)
+                    street = if (adress[0].thoroughfare != null)
+                        adress[0].thoroughfare
+                        else
+                            ""
+                    object: Callback {}.run {
+                        Log.i("ADDRESS CALLBACK", street)
+                        activity.locationInfo.value = mutableMapOf(
+                            "country" to activity.locationInfo.value?.get("country").toString(),
+                            "city" to activity.locationInfo.value?.get("city").toString(),
+                            "street" to street
+                        )
+                    }
+                }
+            }
+        }
+        return street
     }
 
 }

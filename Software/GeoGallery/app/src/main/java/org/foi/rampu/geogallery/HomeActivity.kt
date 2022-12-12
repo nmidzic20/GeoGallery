@@ -3,6 +3,9 @@ package org.foi.rampu.geogallery
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.location.*
@@ -18,6 +21,13 @@ class HomeActivity : AppCompatActivity() {
     lateinit var viewBinding: ActivityHomeBinding
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
+    var locationInfo : MutableLiveData<MutableMap<String, String>> = MutableLiveData(
+        mutableMapOf(
+            "country" to "",
+            "city" to "",
+            "street" to ""
+        )
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,8 +37,16 @@ class HomeActivity : AppCompatActivity() {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         val location = LocationTest(this)
 
+        locationInfo.observe(this, Observer {
+            Log.i("ADDRESS LOCATION INFO MUTABLE DATA", it.toString())
+            viewBinding.tvLocation.text = it["country"] + "," + it["city"] +  "," + it["street"]
+            }
+        )
+
         viewBinding.getPosition.setOnClickListener {
-            viewBinding.tvLocation.text = location.CountryName(fusedLocationProviderClient) + location.CityName(fusedLocationProviderClient)
+            location.countryName(fusedLocationProviderClient)
+            location.cityName(fusedLocationProviderClient)
+            location.streetName(fusedLocationProviderClient)
         }
 
         viewBinding.ibtnLocation.setOnClickListener{
