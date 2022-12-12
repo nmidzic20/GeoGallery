@@ -1,18 +1,15 @@
 package org.foi.rampu.geogallery
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.pm.PackageManager
 import android.graphics.PorterDuff
-import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.Toast
-import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import org.foi.rampu.geogallery.databinding.ActivityAudioBinding
@@ -29,12 +26,7 @@ class AudioActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityAudioBinding.inflate(layoutInflater)
-        setContentView(R.layout.activity_audio)
-
-        audioCapture = MediaRecorder()
-        audioCapture?.setAudioSource(MediaRecorder.AudioSource.MIC)
-        audioCapture?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-        audioCapture?.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+        setContentView(viewBinding.root)
 
         viewBinding.ibtnRecord.setOnClickListener {
             if (!allPermissionsGranted()) {
@@ -48,22 +40,25 @@ class AudioActivity : AppCompatActivity() {
                     stopRecording()
                 }
             }
-            Toast.makeText(this, "snimam", Toast.LENGTH_SHORT).show()
         }
-
     }
 
-    private fun startRecording() {
-        isRecording = true
+    private fun prepareRecorder() {
+        audioCapture = MediaRecorder()
+        audioCapture?.setAudioSource(MediaRecorder.AudioSource.MIC)
+        audioCapture?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+        audioCapture?.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+        audioCapture?.setAudioEncodingBitRate(16)
+        audioCapture?.setAudioSamplingRate(44100)
 
         val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
             .format(System.currentTimeMillis())
 
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
-            put(MediaStore.MediaColumns.MIME_TYPE, "audio/mp3")
+            put(MediaStore.MediaColumns.MIME_TYPE, "audio/mpeg")
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-                put(MediaStore.Audio.Media.RELATIVE_PATH, "Recordings/GeoGallery")
+                put(MediaStore.Audio.Media.RELATIVE_PATH, "Recordings")
             }
         }
         val audioUri =
@@ -71,9 +66,14 @@ class AudioActivity : AppCompatActivity() {
         val file = contentResolver.openFileDescriptor(audioUri!!, "w")
 
         audioCapture?.setOutputFile(file?.fileDescriptor)
+        audioCapture?.prepare()
+    }
+
+    private fun startRecording() {
+        prepareRecorder()
+        isRecording = true
 
         try {
-            audioCapture?.prepare()
             audioCapture?.start()
         } catch (error: IOException) {
             error.printStackTrace()
@@ -89,12 +89,15 @@ class AudioActivity : AppCompatActivity() {
         isRecording = false
 
         audioCapture?.stop()
+        audioCapture?.reset()
         audioCapture?.release()
+        audioCapture = null
 
         viewBinding.ibtnRecord.setColorFilter(
             R.color.black,
             PorterDuff.Mode.SRC_ATOP
         )
+        Toast.makeText(baseContext, "Added recording", Toast.LENGTH_SHORT).show()
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
