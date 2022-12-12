@@ -1,31 +1,44 @@
 package org.foi.rampu.geogallery
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-
 import android.Manifest
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.PorterDuff
+import android.location.Address
+import android.location.Geocoder
+import android.media.ExifInterface
+import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.video.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker
+import androidx.lifecycle.Observer
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import org.foi.rampu.geogallery.classes.AllLocationsInfo
+import org.foi.rampu.geogallery.classes.CurrentLocationInfo
+import org.foi.rampu.geogallery.classes.LocationTest
+import org.foi.rampu.geogallery.classes.SavedLocationInfo
+import org.foi.rampu.geogallery.databinding.ActivityCameraBinding
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import android.widget.Toast
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.core.Preview
-import androidx.camera.core.CameraSelector
-import android.util.Log
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.video.*
-import androidx.core.content.PermissionChecker
-import org.foi.rampu.geogallery.databinding.ActivityCameraBinding
-import java.text.SimpleDateFormat
-import java.util.Locale
+
 
 class CameraActivity : AppCompatActivity() {
     private lateinit var viewBinding: ActivityCameraBinding
@@ -36,6 +49,13 @@ class CameraActivity : AppCompatActivity() {
 
     private lateinit var cameraExecutor: ExecutorService
 
+    lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    val location = LocationTest(this)
+
+    var currentUri : Uri = Uri.EMPTY
+
+
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityCameraBinding.inflate(layoutInflater)
@@ -56,6 +76,101 @@ class CameraActivity : AppCompatActivity() {
         }
 
         cameraExecutor = Executors.newSingleThreadExecutor()
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+
+
+        CurrentLocationInfo.locationInfo.observe(this, Observer {
+            Log.i("ADDRESS LOCATION INFO MUTABLE DATA", it.toString())
+            //create a new element and add to alllocationsinfo, then fetch the last element from it
+            //if exists, return that element
+            //and add to the taken photo/video's metadata?
+            AllLocationsInfo.savedLocationInfo.add(
+                SavedLocationInfo(
+                    CurrentLocationInfo.locationInfo.value?.get("country").toString(),
+                    CurrentLocationInfo.locationInfo.value?.get("city").toString(),
+                    CurrentLocationInfo.locationInfo.value?.get("street").toString(),
+                    currentUri
+                )
+            )
+            Log.i("ADDRESS LOCATION INFO SAVED", AllLocationsInfo.savedLocationInfo.get(
+                AllLocationsInfo.savedLocationInfo.lastIndex
+            ).toString())
+
+            if (currentUri != Uri.EMPTY)
+            {
+                /*currentUri = MediaStore.setRequireOriginal(currentUri)
+                contentResolver.openInputStream(currentUri)?.use { stream ->
+                    ExifInterface(stream).run {
+                        // If lat/long is null, fall back to the coordinates (0, 0).
+                        val latLong : FloatArray = FloatArray(2)
+                        this.getLatLong(latLong)
+
+                        //Log.i("ADDRESS OH MY GOD", getAddress(latLong))
+                    }
+                }*/
+
+                var file : File = File(currentUri.path)
+                //var exif : ExifInterface = ExifInterface(file)
+                //var res = ShowExif(exif)
+                Log.i("ADDRESS EXIF", file.toString())
+
+            }
+
+        }
+        )
+    }
+
+    private fun getAddress(latlong: FloatArray): String {
+        val geocoder: Geocoder
+        val addresses: List<Address>
+        geocoder = Geocoder(this, Locale.getDefault())
+
+        Log.i("ADDRESS LAT LONG", latlong[0].toString() + " " + latlong[1].toString())
+
+        addresses = geocoder.getFromLocation(
+            latlong[0].toDouble(),
+            latlong[1].toDouble(),
+            1
+        ) // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+
+
+        val address: String =
+            addresses[0].getAddressLine(0) // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+
+        val city: String = addresses[0].getLocality()
+        val state: String = addresses[0].getAdminArea()
+        val country: String = addresses[0].getCountryName()
+        val postalCode: String = addresses[0].getPostalCode()
+        val knownName: String = addresses[0].getFeatureName()
+
+        Log.i("ADDRESS SO HELP ME", address)
+
+        return city
+
+    }
+
+    private fun ShowExif(exif: ExifInterface) : String?
+    {
+        var myAttribute: String? = "Exif information ---\n"
+        myAttribute += getTagString(ExifInterface.TAG_DATETIME, exif)
+        myAttribute += getTagString(ExifInterface.TAG_FLASH, exif)
+        myAttribute += getTagString(ExifInterface.TAG_GPS_LATITUDE, exif)
+        myAttribute += getTagString(ExifInterface.TAG_GPS_LATITUDE_REF, exif)
+        myAttribute += getTagString(ExifInterface.TAG_GPS_LONGITUDE, exif)
+        myAttribute += getTagString(ExifInterface.TAG_GPS_LONGITUDE_REF, exif)
+        myAttribute += getTagString(ExifInterface.TAG_IMAGE_LENGTH, exif)
+        myAttribute += getTagString(ExifInterface.TAG_IMAGE_WIDTH, exif)
+        myAttribute += getTagString(ExifInterface.TAG_MAKE, exif)
+        myAttribute += getTagString(ExifInterface.TAG_MODEL, exif)
+        myAttribute += getTagString(ExifInterface.TAG_ORIENTATION, exif)
+        myAttribute += getTagString(ExifInterface.TAG_WHITE_BALANCE, exif)
+
+        return myAttribute
+    }
+
+    private fun getTagString(tag: String, exif: ExifInterface): String? {
+        return """$tag : ${exif.getAttribute(tag)}
+"""
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
@@ -141,14 +256,26 @@ class CameraActivity : AppCompatActivity() {
                     Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
                 }
 
-                override fun
-                        onImageSaved(output: ImageCapture.OutputFileResults){
+                override fun onImageSaved(output: ImageCapture.OutputFileResults)
+                {
                     val msg = "Photo capture succeeded: ${output.savedUri}"
                     Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
+
+                    saveLocation(output.savedUri!!)
                 }
             }
         )
+    }
+
+    private fun saveLocation(uri : Uri) {
+        Log.i("ADDRESS SAVE LOCATION", "came here")
+        currentUri = uri
+        location.countryName(fusedLocationProviderClient)
+        location.cityName(fusedLocationProviderClient)
+        location.streetName(fusedLocationProviderClient)
+        //metapodaci u sliku iz lastlocationfino zadnjeg elementa?
+
     }
 
     private fun captureVideo() {

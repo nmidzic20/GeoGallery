@@ -21,20 +21,20 @@ class HomeActivity : AppCompatActivity() {
     lateinit var viewBinding: ActivityHomeBinding
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-    var locationInfo : MutableLiveData<MutableMap<String, String>> = MutableLiveData(
+    /*var locationInfo : MutableLiveData<MutableMap<String, String>> = MutableLiveData(
         mutableMapOf(
             "country" to "",
             "city" to "",
             "street" to ""
         )
-    )
+    )*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
 
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        /*fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         val location = LocationTest(this)
 
         locationInfo.observe(this, Observer {
@@ -51,7 +51,7 @@ class HomeActivity : AppCompatActivity() {
 
         viewBinding.ibtnLocation.setOnClickListener{
             location.checkLocationPermission()
-        }
+        }*/
 
         viewBinding.ibtnCamera.setOnClickListener {
             val intent = Intent(this, CameraActivity::class.java)
