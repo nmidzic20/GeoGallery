@@ -1,8 +1,12 @@
 package org.foi.rampu.geogallery
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -14,12 +18,17 @@ import com.google.firebase.ktx.Firebase
 import org.foi.rampu.geogallery.classes.FolderManager
 import org.foi.rampu.geogallery.classes.LocationTest
 import org.foi.rampu.geogallery.databinding.ActivityHomeBinding
-
+import android.os.ResultReceiver
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 class HomeActivity : AppCompatActivity() {
 
     lateinit var viewBinding: ActivityHomeBinding
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
+    val location = LocationTest(this)
 
     var locationInfo : MutableLiveData<MutableMap<String, String>> = MutableLiveData(
         mutableMapOf(
@@ -29,19 +38,29 @@ class HomeActivity : AppCompatActivity() {
         )
     )
 
+    private lateinit var locationCallback: LocationCallback
+    private val locationPermissionCode = 2
+    private lateinit var addressResultReceiver: LocationAddressResultReceiver
+    private lateinit var currentLocation: Location
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        val location = LocationTest(this)
 
-        locationInfo.observe(this, Observer {
-            Log.i("ADDRESS LOCATION INFO MUTABLE DATA", it.toString())
-            viewBinding.tvLocation.text = it["country"] + "," + it["city"] +  "," + it["street"]
+        addressResultReceiver = LocationAddressResultReceiver(Handler())
+        locationCallback = object : LocationCallback(){
+            override fun onLocationResult(locationResult: LocationResult) {
+                currentLocation = locationResult.locations[0]
+                getLocationData()
             }
-        )
+        }
+
+        startLocationUpdates()
+        location.checkLocationPermission()
 
         viewBinding.getPosition.setOnClickListener {
             location.countryName(fusedLocationProviderClient)
@@ -84,5 +103,48 @@ class HomeActivity : AppCompatActivity() {
         {
             folderManager.createFolderIcon(mockLocations[i])
         }
+    }
+
+    private fun getLocationData() {
+        locationInfo.observe(this, Observer {
+            Log.i("ADDRESS LOCATION INFO MUTABLE DATA", it.toString())
+            viewBinding.tvLocation.text = it["country"] + "," + it["city"] +  "," + it["street"]
+        }
+        )
+    }
+
+    private fun startLocationUpdates() {
+        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                locationPermissionCode)
+        }
+        else {
+            val locationRequest = LocationRequest()
+            locationRequest.interval = 2000
+            locationRequest.fastestInterval = 1000
+            locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == locationPermissionCode) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
+                location.checkLocationPermission()
+                startLocationUpdates()
+            }
+        }
+    }
+
+    private inner class LocationAddressResultReceiver(handler: Handler) : ResultReceiver(handler) {
+        override fun onReceiveResult(resultCode: Int, resultData: Bundle) {
+        }
+    }
+    override fun onResume() {
+        super.onResume()
+        startLocationUpdates()
+        location.checkLocationPermission()
     }
 }
