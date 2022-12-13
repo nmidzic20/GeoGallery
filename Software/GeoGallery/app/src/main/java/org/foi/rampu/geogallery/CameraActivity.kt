@@ -37,6 +37,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
+
 
 
 class CameraActivity : AppCompatActivity() {
@@ -92,7 +95,7 @@ class CameraActivity : AppCompatActivity() {
                     CurrentLocationInfo.locationInfo.value?.get("country").toString(),
                     CurrentLocationInfo.locationInfo.value?.get("city").toString(),
                     CurrentLocationInfo.locationInfo.value?.get("street").toString(),
-                    currentUri
+                    if (currentUri != Uri.EMPTY) currentUri.toString() else ""
                 )
             )
             Log.i("ADDRESS LOCATION INFO SAVED", AllLocationsInfo.savedLocationInfo.get(
@@ -107,7 +110,9 @@ class CameraActivity : AppCompatActivity() {
 
             //convert to string using gson
             val gson = Gson()
-            val locationsListString = gson.toJson(AllLocationsInfo.savedLocationInfo)
+            //val locationsListString = gson.toJson(AllLocationsInfo.savedLocationInfo)
+
+            val locationsListString = Json.encodeToString(AllLocationsInfo.savedLocationInfo)
 
             context?.getSharedPreferences("locations_preferences", Context.MODE_PRIVATE)?.apply {
 

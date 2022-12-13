@@ -3,6 +3,7 @@ package org.foi.rampu.geogallery
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -16,8 +17,9 @@ import org.foi.rampu.geogallery.classes.AllLocationsInfo
 import org.foi.rampu.geogallery.classes.FolderManager
 import org.foi.rampu.geogallery.classes.SavedLocationInfo
 import org.foi.rampu.geogallery.databinding.ActivityHomeBinding
-import java.lang.reflect.TypeVariable
-import kotlin.reflect.typeOf
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.decodeFromString
 
 
 class HomeActivity : AppCompatActivity() {
@@ -82,12 +84,16 @@ class HomeActivity : AppCompatActivity() {
 
 
         val prefs = getSharedPreferences("locations_preferences", Context.MODE_PRIVATE)
+        //prefs.edit().remove("all_locations_media_taken").commit();
+
         var locsString = prefs.getString("all_locations_media_taken", "No locations saved yet")
+        Log.i("ADDRESS HOME ACTIVITY ", locsString.toString())
 
-        val gson = Gson()
-        //var locsList =
+        var obj = mutableListOf<SavedLocationInfo>()
+        if (locsString != "No locations saved yet")
+            obj = Json.decodeFromString<MutableList<SavedLocationInfo>>(locsString!!)
 
-        //Log.i("ADDRESS HOME ACTIVITY ", locsList.toString())
+        Log.i("ADDRESS HOME ACTIVITY ", obj.toString())
 
         //size = locsList!!.size
         //Log.i("ADDRESS HOME ACTIVITY SIZE", size.toString())
