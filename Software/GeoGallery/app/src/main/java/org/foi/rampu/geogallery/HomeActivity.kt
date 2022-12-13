@@ -7,9 +7,7 @@ import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.location.*
@@ -55,18 +53,12 @@ class HomeActivity : AppCompatActivity() {
         locationCallback = object : LocationCallback(){
             override fun onLocationResult(locationResult: LocationResult) {
                 currentLocation = locationResult.locations[0]
-                getLocationData()
+                viewBinding.tvLocation.text = location.countryName(currentLocation)+ "," + location.cityName(currentLocation)+ "," + location.streetName(currentLocation)
             }
         }
 
         startLocationUpdates()
         location.checkLocationPermission()
-
-        viewBinding.getPosition.setOnClickListener {
-            location.countryName(fusedLocationProviderClient)
-            location.cityName(fusedLocationProviderClient)
-            location.streetName(fusedLocationProviderClient)
-        }
 
         viewBinding.ibtnLocation.setOnClickListener{
             location.checkLocationPermission()
@@ -103,14 +95,6 @@ class HomeActivity : AppCompatActivity() {
         {
             folderManager.createFolderIcon(mockLocations[i])
         }
-    }
-
-    private fun getLocationData() {
-        locationInfo.observe(this, Observer {
-            Log.i("ADDRESS LOCATION INFO MUTABLE DATA", it.toString())
-            viewBinding.tvLocation.text = it["country"] + "," + it["city"] +  "," + it["street"]
-        }
-        )
     }
 
     private fun startLocationUpdates() {
