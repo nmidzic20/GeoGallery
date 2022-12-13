@@ -1,21 +1,23 @@
 package org.foi.rampu.geogallery
 
+import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.location.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import org.foi.rampu.geogallery.classes.AllLocationsInfo
-import org.foi.rampu.geogallery.classes.AllLocationsInfo.savedLocationInfo
 import org.foi.rampu.geogallery.classes.FolderManager
-import org.foi.rampu.geogallery.classes.LocationTest
+import org.foi.rampu.geogallery.classes.SavedLocationInfo
 import org.foi.rampu.geogallery.databinding.ActivityHomeBinding
+import java.lang.reflect.TypeVariable
+import kotlin.reflect.typeOf
 
 
 class HomeActivity : AppCompatActivity() {
@@ -68,6 +70,7 @@ class HomeActivity : AppCompatActivity() {
         val mockLocations = listOf<String>("Zagreb", "Varaždin", "Rijeka", "Graz", "Rome", "Dubrovnik",
             "Trieste", "Venice", "Osijek", "Pula")
 
+        //doesn't work
         AllLocationsInfo.savedLocationInfo.forEach {
             if (it.city != "") realLocations.add(it.city)
         }
@@ -75,16 +78,31 @@ class HomeActivity : AppCompatActivity() {
 
         var size = AllLocationsInfo.savedLocationInfo.size
         Log.i("FOLDER SIZE", size.toString())
+        //
 
 
+        val prefs = getSharedPreferences("locations_preferences", Context.MODE_PRIVATE)
+        var locsString = prefs.getString("all_locations_media_taken", "No locations saved yet")
+
+        val gson = Gson()
+        //var locsList =
+
+        //Log.i("ADDRESS HOME ACTIVITY ", locsList.toString())
+
+        //size = locsList!!.size
+        //Log.i("ADDRESS HOME ACTIVITY SIZE", size.toString())
+
+
+        /*
         if (size != 0)
         {
-            for (i in 0..size) //for (i in 0..9)
+            for (i in 0..size)
             {
-                Log.i("FOLDER CITY", AllLocationsInfo.savedLocationInfo[i].city)
+                Log.i("ADDRESS FOLDER CITY")
                 if (AllLocationsInfo.savedLocationInfo[i].city != "")
                     folderManager.createFolderIcon(AllLocationsInfo.savedLocationInfo[i].city)
             }
         }
+        */
     }
 }

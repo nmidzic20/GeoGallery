@@ -2,11 +2,10 @@ package org.foi.rampu.geogallery
 
 import android.Manifest
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.PorterDuff
-import android.location.Address
-import android.location.Geocoder
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
@@ -20,7 +19,6 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
-import androidx.camera.core.impl.utils.Exif
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.*
 import androidx.core.app.ActivityCompat
@@ -29,12 +27,12 @@ import androidx.core.content.PermissionChecker
 import androidx.lifecycle.Observer
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.gson.Gson
 import org.foi.rampu.geogallery.classes.AllLocationsInfo
 import org.foi.rampu.geogallery.classes.CurrentLocationInfo
 import org.foi.rampu.geogallery.classes.LocationTest
 import org.foi.rampu.geogallery.classes.SavedLocationInfo
 import org.foi.rampu.geogallery.databinding.ActivityCameraBinding
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -79,12 +77,16 @@ class CameraActivity : AppCompatActivity() {
         cameraExecutor = Executors.newSingleThreadExecutor()
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
+        val context : Context = this
+
 
         CurrentLocationInfo.locationInfo.observe(this, Observer {
             Log.i("ADDRESS LOCATION INFO MUTABLE DATA", it.toString())
             //create a new element and add to alllocationsinfo, then fetch the last element from it
             //if exists, return that element
             //and add to the taken photo/video's metadata
+
+            //store in object within app lifetime
             AllLocationsInfo.savedLocationInfo.add(
                 SavedLocationInfo(
                     CurrentLocationInfo.locationInfo.value?.get("country").toString(),
@@ -96,6 +98,25 @@ class CameraActivity : AppCompatActivity() {
             Log.i("ADDRESS LOCATION INFO SAVED", AllLocationsInfo.savedLocationInfo.get(
                 AllLocationsInfo.savedLocationInfo.lastIndex
             ).toString())
+
+
+            //store locally on device
+            val sharedPreferences = getSharedPreferences(
+                "locations_preferences", Context.MODE_PRIVATE
+            )
+
+            //convert to string using gson
+            val gson = Gson()
+            val locationsListString = gson.toJson(AllLocationsInfo.savedLocationInfo)
+
+            context?.getSharedPreferences("locations_preferences", Context.MODE_PRIVATE)?.apply {
+
+                edit().putString("all_locations_media_taken", locationsListString).apply()
+                val allSavedLocations = getString("all_locations_media_taken", "No locations saved yet")
+                Log.i("ADDRESS shared prefs", allSavedLocations.toString())
+            }
+
+            //metadata
 
             if (currentUri != Uri.EMPTY)
             {
