@@ -8,33 +8,49 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import androidx.lifecycle.MutableLiveData
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import android.provider.ContactsContract
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.location.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import org.foi.rampu.geogallery.classes.AllLocationsInfo
 import org.foi.rampu.geogallery.classes.FolderManager
-import org.foi.rampu.geogallery.classes.LocationTest
+import org.foi.rampu.geogallery.classes.SavedLocationInfo
 import org.foi.rampu.geogallery.databinding.ActivityHomeBinding
 import android.os.ResultReceiver
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.decodeFromString
+
 
 class HomeActivity : AppCompatActivity() {
 
     lateinit var viewBinding: ActivityHomeBinding
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-    val location = LocationTest(this)
 
-    var locationInfo : MutableLiveData<MutableMap<String, String>> = MutableLiveData(
+    /*var locationInfo : MutableLiveData<MutableMap<String, String>> = MutableLiveData(
         mutableMapOf(
             "country" to "",
             "city" to "",
             "street" to ""
         )
-    )
+    )*/
+
+    companion object {
+        val realLocations = mutableListOf<String>()
+    }
 
     private lateinit var locationCallback: LocationCallback
     private val locationPermissionCode = 2
@@ -91,10 +107,36 @@ class HomeActivity : AppCompatActivity() {
 
         val mockLocations = listOf<String>("Zagreb", "Varaždin", "Rijeka", "Graz", "Rome", "Dubrovnik",
             "Trieste", "Venice", "Osijek", "Pula")
-        for (i in 0..9)
+
+
+
+        val prefs = getSharedPreferences("locations_preferences", Context.MODE_PRIVATE)
+        //prefs.edit().remove("all_locations_media_taken").commit();
+
+        var locsString = prefs.getString("all_locations_media_taken", "No locations saved yet")
+        Log.i("ADDRESS HOME ACTIVITY ", locsString.toString())
+
+        var obj = mutableListOf<SavedLocationInfo>()
+        if (locsString != "No locations saved yet")
+            obj = Json.decodeFromString<MutableList<SavedLocationInfo>>(locsString!!)
+
+        Log.i("ADDRESS DESERIALISED ", obj.toString())
+
+        var size = obj.size
+        Log.i("ADDRESS HOME ACTIVITY SIZE", size.toString())
+
+
+
+        if (size != 0)
         {
-            folderManager.createFolderIcon(mockLocations[i])
+            for (i in 0 until size)
+            {
+                Log.i("ADDRESS FOLDER CITY", obj[i].city)
+                if (obj[i].city != "" && obj[i].city != null)
+                    folderManager.createFolderIcon(obj[i].city)
+            }
         }
+
     }
 
     private fun startLocationUpdates() {

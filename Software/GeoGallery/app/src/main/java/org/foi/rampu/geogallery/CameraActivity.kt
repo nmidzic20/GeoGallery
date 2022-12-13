@@ -1,31 +1,46 @@
 package org.foi.rampu.geogallery
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-
 import android.Manifest
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.PorterDuff
+import android.media.ExifInterface
+import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.video.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import android.widget.Toast
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.core.Preview
-import androidx.camera.core.CameraSelector
-import android.util.Log
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.video.*
 import androidx.core.content.PermissionChecker
+import androidx.lifecycle.Observer
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.gson.Gson
+import org.foi.rampu.geogallery.classes.AllLocationsInfo
+import org.foi.rampu.geogallery.classes.CurrentLocationInfo
+import org.foi.rampu.geogallery.classes.LocationTest
+import org.foi.rampu.geogallery.classes.SavedLocationInfo
 import org.foi.rampu.geogallery.databinding.ActivityCameraBinding
 import java.text.SimpleDateFormat
-import java.util.Locale
+import java.util.*
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
+
+
 
 class CameraActivity : AppCompatActivity() {
     private lateinit var viewBinding: ActivityCameraBinding
@@ -36,6 +51,13 @@ class CameraActivity : AppCompatActivity() {
 
     private lateinit var cameraExecutor: ExecutorService
 
+    lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    val location = LocationTest(this)
+
+    var currentUri : Uri = Uri.EMPTY
+
+
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityCameraBinding.inflate(layoutInflater)
@@ -56,6 +78,74 @@ class CameraActivity : AppCompatActivity() {
         }
 
         cameraExecutor = Executors.newSingleThreadExecutor()
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+
+        val context : Context = this
+
+
+        CurrentLocationInfo.locationInfo.observe(this, Observer {
+            Log.i("ADDRESS LOCATION INFO MUTABLE DATA", it.toString())
+            //create a new element and add to alllocationsinfo, then fetch the last element from it
+            //if exists, return that element
+            //and add to the taken photo/video's metadata
+
+            //store in object within app lifetime
+            AllLocationsInfo.savedLocationInfo.add(
+                SavedLocationInfo(
+                    CurrentLocationInfo.locationInfo.value?.get("country").toString(),
+                    CurrentLocationInfo.locationInfo.value?.get("city").toString(),
+                    CurrentLocationInfo.locationInfo.value?.get("street").toString(),
+                    if (currentUri != Uri.EMPTY) currentUri.toString() else ""
+                )
+            )
+            Log.i("ADDRESS LOCATION INFO SAVED", AllLocationsInfo.savedLocationInfo.get(
+                AllLocationsInfo.savedLocationInfo.lastIndex
+            ).toString())
+
+
+            //store locally on device
+            val sharedPreferences = getSharedPreferences(
+                "locations_preferences", Context.MODE_PRIVATE
+            )
+
+            //convert to string using gson
+            val gson = Gson()
+            //val locationsListString = gson.toJson(AllLocationsInfo.savedLocationInfo)
+
+            val locationsListString = Json.encodeToString(AllLocationsInfo.savedLocationInfo)
+
+            context?.getSharedPreferences("locations_preferences", Context.MODE_PRIVATE)?.apply {
+
+                edit().putString("all_locations_media_taken", locationsListString).apply()
+                val allSavedLocations = getString("all_locations_media_taken", "No locations saved yet")
+                Log.i("ADDRESS shared prefs", allSavedLocations.toString())
+            }
+
+            //metadata
+
+            if (currentUri != Uri.EMPTY)
+            {
+                var data = AllLocationsInfo.savedLocationInfo.get(
+                        AllLocationsInfo.savedLocationInfo.lastIndex
+                    )
+
+                var dataString = Json.encodeToString(data)
+
+                var exifData = ExifInterface(this.contentResolver.openFileDescriptor(currentUri, "rw", null)!!.fileDescriptor)
+                exifData.setAttribute("UserComment", dataString)
+                exifData.saveAttributes()
+
+                Log.i("ADDRESS EXIF 1", getTagString("UserComment", exifData).toString())
+
+            }
+
+        }
+        )
+    }
+
+    private fun getTagString(tag: String, exif: ExifInterface): String?
+    {
+        return """$tag : ${exif.getAttribute(tag)}"""
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
@@ -141,14 +231,26 @@ class CameraActivity : AppCompatActivity() {
                     Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
                 }
 
-                override fun
-                        onImageSaved(output: ImageCapture.OutputFileResults){
+                override fun onImageSaved(output: ImageCapture.OutputFileResults)
+                {
                     val msg = "Photo capture succeeded: ${output.savedUri}"
                     Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
+
+                    saveLocation(output.savedUri!!)
                 }
             }
         )
+    }
+
+    private fun saveLocation(uri : Uri) {
+        Log.i("ADDRESS SAVE LOCATION", "came here")
+        currentUri = uri
+        location.countryName(fusedLocationProviderClient)
+        location.cityName(fusedLocationProviderClient)
+        location.streetName(fusedLocationProviderClient)
+        //metapodaci u sliku iz lastlocationfino zadnjeg elementa?
+
     }
 
     private fun captureVideo() {
