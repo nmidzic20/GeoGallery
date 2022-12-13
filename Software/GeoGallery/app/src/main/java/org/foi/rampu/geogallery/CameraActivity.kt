@@ -127,14 +127,12 @@ class CameraActivity : AppCompatActivity() {
             {
                 var data = AllLocationsInfo.savedLocationInfo.get(
                         AllLocationsInfo.savedLocationInfo.lastIndex
-                    ).country + AllLocationsInfo.savedLocationInfo.get(
-                        AllLocationsInfo.savedLocationInfo.lastIndex
-                    ).city + AllLocationsInfo.savedLocationInfo.get(
-                        AllLocationsInfo.savedLocationInfo.lastIndex
-                    ).street
+                    )
+
+                var dataString = Json.encodeToString(data)
 
                 var exifData = ExifInterface(this.contentResolver.openFileDescriptor(currentUri, "rw", null)!!.fileDescriptor)
-                exifData.setAttribute("UserComment", data)
+                exifData.setAttribute("UserComment", dataString)
                 exifData.saveAttributes()
 
                 Log.i("ADDRESS EXIF 1", getTagString("UserComment", exifData).toString())
