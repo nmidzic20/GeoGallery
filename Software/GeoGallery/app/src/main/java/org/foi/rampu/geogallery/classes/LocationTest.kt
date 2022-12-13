@@ -85,9 +85,11 @@ class LocationTest(val activity: HomeActivity){
                         val geoCoder = Geocoder(activity, Locale.getDefault())
                         val address = geoCoder.getFromLocation(currentLocation.latitude, currentLocation.longitude, 1)
                         city = if (address[0].locality != null)
-                            address[0].locality
-                        else
-                            address[0].subAdminArea
+                                address[0].locality
+                            else if (address[0].subAdminArea != null)
+                                address[0].subAdminArea
+                            else
+                                ""
                         object : Callback {}.run {
                             Log.i("ADDRESS CALLBACK", city)
                             activity.locationInfo.value = mutableMapOf(
@@ -102,9 +104,9 @@ class LocationTest(val activity: HomeActivity){
                     val geoCoder = Geocoder(activity, Locale.getDefault())
                     val address = geoCoder.getFromLocation(currentLocation.latitude, currentLocation.longitude, 1)
                     street = if (address[0].thoroughfare != null)
-                        address[0].thoroughfare
-                    else
-                        ""
+                            address[0].thoroughfare
+                        else
+                            ""
                     object : Callback {}.run {
                         Log.i("ADDRESS CALLBACK", street)
                         activity.locationInfo.value = mutableMapOf(
