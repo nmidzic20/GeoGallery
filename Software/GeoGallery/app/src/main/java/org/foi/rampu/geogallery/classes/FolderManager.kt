@@ -23,17 +23,11 @@ class FolderManager(val activity: HomeActivity) {
         PURPLE(R.color.purple_200)
     }
 
+
     fun createFolderIcon(locationName: String)
     {
         val layout = activity.viewBinding.gridLayout as ViewGroup
-
-        val linearLayout = LinearLayout(activity)
-        linearLayout.layoutParams =
-            LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-            )
-        linearLayout.orientation = LinearLayout.VERTICAL
+        val linearLayout = setLayout()
 
         val ivFolder = createFolderImage()
         val tvFolderName = createLocationName(locationName)
@@ -50,6 +44,19 @@ class FolderManager(val activity: HomeActivity) {
         linearLayout.addView(tvFolderName)
 
         layout.addView(linearLayout)
+    }
+
+    fun setLayout(): LinearLayout
+    {
+        val linearLayout = LinearLayout(activity)
+        linearLayout.layoutParams =
+            LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+            )
+        linearLayout.orientation = LinearLayout.VERTICAL
+
+        return linearLayout
     }
 
     fun createFolderImage() : ImageView

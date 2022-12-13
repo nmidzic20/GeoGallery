@@ -84,7 +84,7 @@ class CameraActivity : AppCompatActivity() {
             Log.i("ADDRESS LOCATION INFO MUTABLE DATA", it.toString())
             //create a new element and add to alllocationsinfo, then fetch the last element from it
             //if exists, return that element
-            //and add to the taken photo/video's metadata?
+            //and add to the taken photo/video's metadata
             AllLocationsInfo.savedLocationInfo.add(
                 SavedLocationInfo(
                     CurrentLocationInfo.locationInfo.value?.get("country").toString(),
@@ -95,43 +95,23 @@ class CameraActivity : AppCompatActivity() {
             )
             Log.i("ADDRESS LOCATION INFO SAVED", AllLocationsInfo.savedLocationInfo.get(
                 AllLocationsInfo.savedLocationInfo.lastIndex
-            ).city.toString())
+            ).toString())
 
             if (currentUri != Uri.EMPTY)
             {
                 var data = AllLocationsInfo.savedLocationInfo.get(
                         AllLocationsInfo.savedLocationInfo.lastIndex
-                    ).city.toString()
+                    ).country + AllLocationsInfo.savedLocationInfo.get(
+                        AllLocationsInfo.savedLocationInfo.lastIndex
+                    ).city + AllLocationsInfo.savedLocationInfo.get(
+                        AllLocationsInfo.savedLocationInfo.lastIndex
+                    ).street
+
                 var exifData = ExifInterface(this.contentResolver.openFileDescriptor(currentUri, "rw", null)!!.fileDescriptor)
-                exifData.setAttribute("UserComment", data.toString())
+                exifData.setAttribute("UserComment", data)
                 exifData.saveAttributes()
 
                 Log.i("ADDRESS EXIF 1", getTagString("UserComment", exifData).toString())
-
-
-
-
-                /*currentUri = MediaStore.setRequireOriginal(currentUri)
-                contentResolver.openInputStream(currentUri)?.use { stream ->
-                    ExifInterface(stream).run {
-                        this.setAttribute(ExifInterface.TAG_SUBJECT_LOCATION, AllLocationsInfo.savedLocationInfo.get(
-                                AllLocationsInfo.savedLocationInfo.lastIndex
-                            ).city.toString()
-                        )
-                        this.saveAttributes()
-
-                        Log.i("ADDRESS EXIF 1", getTagString(ExifInterface.TAG_SUBJECT_LOCATION, this).toString())
-
-                        ShowExif(this)
-
-
-                    }
-                }*/
-
-                //var file : File = File(currentUri.path)
-                //var exif : ExifInterface = ExifInterface(file)
-                //var res = ShowExif(exif)
-                //Log.i("ADDRESS EXIF", file.toString())
 
             }
 
@@ -139,60 +119,9 @@ class CameraActivity : AppCompatActivity() {
         )
     }
 
-    private fun getAddress(latlong: FloatArray): String {
-        val geocoder: Geocoder
-        val addresses: List<Address>
-        geocoder = Geocoder(this, Locale.getDefault())
-
-        Log.i("ADDRESS LAT LONG", latlong[0].toString() + " " + latlong[1].toString())
-
-        addresses = geocoder.getFromLocation(
-            latlong[0].toDouble(),
-            latlong[1].toDouble(),
-            1
-        ) // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-
-
-        val address: String =
-            addresses[0].getAddressLine(0) // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-
-        val city: String = addresses[0].getLocality()
-        val state: String = addresses[0].getAdminArea()
-        val country: String = addresses[0].getCountryName()
-        val postalCode: String = addresses[0].getPostalCode()
-        val knownName: String = addresses[0].getFeatureName()
-
-        Log.i("ADDRESS SO HELP ME", address)
-
-        return city
-
-    }
-
-    private fun ShowExif(exif: ExifInterface) : String?
+    private fun getTagString(tag: String, exif: ExifInterface): String?
     {
-        var myAttribute: String? = "Exif information ---\n"
-        /*myAttribute += getTagString(ExifInterface.TAG_DATETIME, exif)
-        myAttribute += getTagString(ExifInterface.TAG_FLASH, exif)
-        myAttribute += getTagString(ExifInterface.TAG_GPS_LATITUDE, exif)
-        myAttribute += getTagString(ExifInterface.TAG_GPS_LATITUDE_REF, exif)
-        myAttribute += getTagString(ExifInterface.TAG_GPS_LONGITUDE, exif)
-        myAttribute += getTagString(ExifInterface.TAG_GPS_LONGITUDE_REF, exif)
-        myAttribute += getTagString(ExifInterface.TAG_IMAGE_LENGTH, exif)
-        myAttribute += getTagString(ExifInterface.TAG_IMAGE_WIDTH, exif)
-        myAttribute += getTagString(ExifInterface.TAG_MAKE, exif)
-        myAttribute += getTagString(ExifInterface.TAG_MODEL, exif)
-        myAttribute += getTagString(ExifInterface.TAG_ORIENTATION, exif)
-        myAttribute += getTagString(ExifInterface.TAG_WHITE_BALANCE, exif)*/
-        myAttribute += getTagString(ExifInterface.TAG_SUBJECT_LOCATION, exif)
-
-        Log.i("ADDRESS EXIF", myAttribute.toString())
-
-        return myAttribute
-    }
-
-    private fun getTagString(tag: String, exif: ExifInterface): String? {
-        return """$tag : ${exif.getAttribute(tag)}
-"""
+        return """$tag : ${exif.getAttribute(tag)}"""
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
