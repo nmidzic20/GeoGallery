@@ -72,15 +72,6 @@ class HomeActivity : AppCompatActivity() {
         val mockLocations = listOf<String>("Zagreb", "Varaždin", "Rijeka", "Graz", "Rome", "Dubrovnik",
             "Trieste", "Venice", "Osijek", "Pula")
 
-        //doesn't work
-        AllLocationsInfo.savedLocationInfo.forEach {
-            if (it.city != "") realLocations.add(it.city)
-        }
-        Log.i("FOLDER", realLocations.toString())
-
-        var size = AllLocationsInfo.savedLocationInfo.size
-        Log.i("FOLDER SIZE", size.toString())
-        //
 
 
         val prefs = getSharedPreferences("locations_preferences", Context.MODE_PRIVATE)
@@ -93,22 +84,22 @@ class HomeActivity : AppCompatActivity() {
         if (locsString != "No locations saved yet")
             obj = Json.decodeFromString<MutableList<SavedLocationInfo>>(locsString!!)
 
-        Log.i("ADDRESS HOME ACTIVITY ", obj.toString())
+        Log.i("ADDRESS DESERIALISED ", obj.toString())
 
-        //size = locsList!!.size
-        //Log.i("ADDRESS HOME ACTIVITY SIZE", size.toString())
+        var size = obj.size
+        Log.i("ADDRESS HOME ACTIVITY SIZE", size.toString())
 
 
-        /*
+
         if (size != 0)
         {
-            for (i in 0..size)
+            for (i in 0 until size)
             {
-                Log.i("ADDRESS FOLDER CITY")
-                if (AllLocationsInfo.savedLocationInfo[i].city != "")
-                    folderManager.createFolderIcon(AllLocationsInfo.savedLocationInfo[i].city)
+                Log.i("ADDRESS FOLDER CITY", obj[i].city)
+                if (obj[i].city != "" && obj[i].city != null)
+                    folderManager.createFolderIcon(obj[i].city)
             }
         }
-        */
+
     }
 }
