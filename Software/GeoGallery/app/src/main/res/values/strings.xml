@@ -15,6 +15,6 @@
     <string name="news_ws_err_msg">Web service currently unavailable, try again later</string>
     <string name="gallery">Gallery</string>
     <string name="location_info">About location</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="shared_prefs_default_location_info">No locations saved yet</string>
 </resources>

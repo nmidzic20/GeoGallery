@@ -109,11 +109,11 @@ class HomeActivity : AppCompatActivity() {
         val prefs = getSharedPreferences("locations_preferences", Context.MODE_PRIVATE)
         //prefs.edit().remove("all_locations_media_taken").commit();
 
-        var locsString = prefs.getString("all_locations_media_taken", "No locations saved yet")
+        var locsString = prefs.getString("all_locations_media_taken", resources.getString(R.string.shared_prefs_default_location_info))
         Log.i("HOME ACTIVITY ", locsString.toString())
 
         var obj = mutableListOf<SavedLocationInfo>()
-        if (locsString != "No locations saved yet")
+        if (locsString != resources.getString(R.string.shared_prefs_default_location_info))
             obj = Json.decodeFromString<MutableList<SavedLocationInfo>>(locsString!!)
 
         Log.i("HOME DESERIALISED ", obj.toString())
