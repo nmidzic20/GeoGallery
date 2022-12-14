@@ -256,15 +256,14 @@ class CameraActivity : AppCompatActivity() {
                 CurrentLocationInfo.locationInfo.value?.get("street").toString()
             )
         )
-        Log.i("LOCATION INFO SAVED", AllLocationsInfo.savedLocationInfo.get(
-            AllLocationsInfo.savedLocationInfo.lastIndex
-        ).toString())
+
 
 
         //store locally on device in shared preferences
 
         //first convert to string
         val locationsListString = Json.encodeToString(AllLocationsInfo.savedLocationInfo)
+        Log.i("NOW", locationsListString)
 
         context?.getSharedPreferences("locations_preferences", Context.MODE_PRIVATE)?.apply {
 

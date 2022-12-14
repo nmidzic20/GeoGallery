@@ -12,6 +12,6 @@ data class SavedLocationInfo(
 
 @Serializable
 object AllLocationsInfo {
-    var savedLocationInfo : MutableList<SavedLocationInfo> = mutableListOf()
+    var savedLocationInfo : MutableSet<SavedLocationInfo> = mutableSetOf()
 }
 
