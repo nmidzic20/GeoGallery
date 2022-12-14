@@ -26,7 +26,7 @@ class PhotoGallery(val galleryFragment: GalleryFragment) {
         val selection : String? = null
         val selectionArgs = arrayOf<String>()
         val sortOrder : String? = null
-        var exifData : ExifInterface? = null
+        var mediaLocationManager : MediaLocationManager = MediaLocationManager()
 
         //fetch all images from MediaStore
         galleryFragment.activity?.applicationContext?.contentResolver?.query(
@@ -48,25 +48,18 @@ class PhotoGallery(val galleryFragment: GalleryFragment) {
                 val imgUri = Uri.parse(contentUri.toString())
                 Log.i("URI", imgUri.toString())
 
-                var exifData = ExifInterface(galleryFragment!!.requireActivity().contentResolver!!
-                    .openFileDescriptor(imgUri, "rw", null)!!.fileDescriptor)
+                var locationMetadata = mediaLocationManager.getLocationMetadata(galleryFragment, imgUri)
 
-                var locationMetadataString = exifData.getAttribute("UserComment")
-                Log.i("IMAGE USER COMMENT", locationMetadataString.toString())
-
-                var locationMetadata = Json.decodeFromString<SavedLocationInfo>(locationMetadataString!!)
-
-
-                //display image only if its lcoation metadata matches folder location name
-                Log.i("IMAGE SHOWN?", locationMetadata.toString() + " " + galleryFragment.folderName)
+                //display image only if its location metadata matches folder location name
+                Log.i("IMAGE_SHOWN?", locationMetadata.toString() + " " + galleryFragment.folderName)
 
                 if (locationMetadata.city == galleryFragment.folderName)
                 {
                     createImageView(imgUri)
-                    Log.i("IMAGE SHOWN?", "yes")
+                    Log.i("IMAGE_SHOWN?", "yes")
                 }
                 else
-                    Log.i("IMAGE SHOWN?", "no")
+                    Log.i("IMAGE_SHOWN?", "no")
 
             }
         }

@@ -66,7 +66,7 @@ class CameraActivity : AppCompatActivity() {
         }
 
         viewBinding.ibtnPhoto.setOnClickListener { takePhoto(this) }
-        viewBinding.ibtnVideo.setOnClickListener { captureVideo() }
+        viewBinding.ibtnVideo.setOnClickListener { captureVideo(this) }
         viewBinding.ibtnBack.setOnClickListener {
             val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
@@ -175,7 +175,7 @@ class CameraActivity : AppCompatActivity() {
 
 
 
-    private fun captureVideo() {
+    private fun captureVideo(context: Context) {
         val videoCapture = this.videoCapture ?: return
 
         viewBinding.ibtnVideo.isEnabled = false
@@ -227,6 +227,9 @@ class CameraActivity : AppCompatActivity() {
                             Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT)
                                 .show()
                             Log.d(TAG, msg)
+
+                            //mediaLocationManager.saveLocation(recordEvent.outputResults.outputUri, context, this@CameraActivity)
+
                         } else {
                             recording?.close()
                             recording = null

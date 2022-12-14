@@ -5,6 +5,7 @@ import android.content.Context
 import android.media.ExifInterface
 import android.net.Uri
 import android.util.Log
+import androidx.fragment.app.Fragment
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -85,5 +86,19 @@ class MediaLocationManager {
     private fun getTagString(tag: String, exif: ExifInterface): String?
     {
         return """$tag : ${exif.getAttribute(tag)}"""
+    }
+
+
+    fun getLocationMetadata(fragment : Fragment, mediaUri : Uri) : SavedLocationInfo
+    {
+        var exifData = ExifInterface(fragment!!.requireActivity().contentResolver!!
+            .openFileDescriptor(mediaUri, "rw", null)!!.fileDescriptor)
+
+        var locationMetadataString = exifData.getAttribute("UserComment")
+        Log.i("IMAGE_USER_COMMENT", locationMetadataString.toString())
+
+        var locationMetadata = Json.decodeFromString<SavedLocationInfo>(locationMetadataString!!)
+
+        return locationMetadata
     }
 }
