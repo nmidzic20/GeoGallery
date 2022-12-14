@@ -52,9 +52,6 @@ class CameraActivity : AppCompatActivity() {
     private lateinit var cameraExecutor: ExecutorService
 
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    val location = LocationTest(this)
-
-    var currentUri : Uri = Uri.EMPTY
 
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -70,7 +67,7 @@ class CameraActivity : AppCompatActivity() {
                 this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
 
-        viewBinding.ibtnPhoto.setOnClickListener { takePhoto() }
+        viewBinding.ibtnPhoto.setOnClickListener { takePhoto(this) }
         viewBinding.ibtnVideo.setOnClickListener { captureVideo() }
         viewBinding.ibtnBack.setOnClickListener {
             val intent = Intent(this, HomeActivity::class.java)
@@ -80,10 +77,9 @@ class CameraActivity : AppCompatActivity() {
         cameraExecutor = Executors.newSingleThreadExecutor()
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
-        val context : Context = this
 
 
-        CurrentLocationInfo.locationInfo.observe(this, Observer {
+        /*CurrentLocationInfo.locationInfo.observe(this, Observer {
             Log.i("ADDRESS LOCATION INFO MUTABLE DATA", it.toString())
             //create a new element and add to alllocationsinfo, then fetch the last element from it
             //if exists, return that element
@@ -139,8 +135,7 @@ class CameraActivity : AppCompatActivity() {
 
             }
 
-        }
-        )
+        })*/
     }
 
     private fun getTagString(tag: String, exif: ExifInterface): String?
@@ -204,7 +199,7 @@ class CameraActivity : AppCompatActivity() {
         }, ContextCompat.getMainExecutor(this))
     }
 
-    private fun takePhoto() {
+    private fun takePhoto(context: Context) {
         val imageCapture = imageCapture ?: return
 
         val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
@@ -237,17 +232,14 @@ class CameraActivity : AppCompatActivity() {
                     Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
 
-                    saveLocation(output.savedUri!!)
+                    saveLocation(output.savedUri!!, context)
                 }
             }
         )
     }
 
-    //ovo samo bitno da se spremi u uri jer ne mogu u onImageSaved pisati metapodatke nego moram
-    //u observeru gore svaki put kad se lokacija promijeni
-    private fun saveLocation(uri : Uri) {
+    private fun saveLocation(uri : Uri, context : Context) {
         Log.i("ADDRESS SAVE LOCATION", "came here")
-        currentUri = uri
         /*ovo sad nepotrebno jer se u homeu u location callbacku zove ovo automatski na svaku promjenu lokacije
         samo treba izvaditi iz zajedničkog objekta trenutne lokacije - CurrentLocationInfo
         location.countryName(fusedLocationProviderClient)
@@ -255,6 +247,48 @@ class CameraActivity : AppCompatActivity() {
         location.cityName(fusedLocationProviderClient)
         location.streetName(fusedLocationProviderClient)*/
         //metapodaci u sliku iz lastlocationfino zadnjeg elementa?
+
+
+        AllLocationsInfo.savedLocationInfo.add(
+            SavedLocationInfo(
+                CurrentLocationInfo.locationInfo.value?.get("country").toString(),
+                CurrentLocationInfo.locationInfo.value?.get("city").toString(),
+                CurrentLocationInfo.locationInfo.value?.get("street").toString()
+            )
+        )
+        Log.i("LOCATION INFO SAVED", AllLocationsInfo.savedLocationInfo.get(
+            AllLocationsInfo.savedLocationInfo.lastIndex
+        ).toString())
+
+
+        //store locally on device in shared preferences
+
+        //first convert to string
+        val locationsListString = Json.encodeToString(AllLocationsInfo.savedLocationInfo)
+
+        context?.getSharedPreferences("locations_preferences", Context.MODE_PRIVATE)?.apply {
+
+            edit().putString("all_locations_media_taken", locationsListString).apply()
+            val allSavedLocations = getString("all_locations_media_taken", "No locations saved yet")
+            Log.i("shared prefs", allSavedLocations.toString())
+        }
+
+        //metadata
+
+
+        var data = CurrentLocationInfo.locationInfo.value
+
+        Log.i("DATA", data.toString())
+
+        var dataString = Json.encodeToString(data)
+
+        var exifData = ExifInterface(this.contentResolver.openFileDescriptor(uri, "rw", null)!!.fileDescriptor)
+        exifData.setAttribute("UserComment", dataString)
+        exifData.saveAttributes()
+
+        Log.i("EXIF", getTagString("UserComment", exifData).toString() + " " + uri.toString())
+
+
 
     }
 

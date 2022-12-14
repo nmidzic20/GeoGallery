@@ -7,8 +7,7 @@ import kotlinx.serialization.Serializable
 data class SavedLocationInfo(
     val country : String,
     val city : String,
-    val street : String,
-    val uri : String
+    val street : String
 )
 
 @Serializable

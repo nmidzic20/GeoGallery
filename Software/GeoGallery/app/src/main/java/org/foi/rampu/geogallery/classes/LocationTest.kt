@@ -11,10 +11,11 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import org.foi.rampu.geogallery.CameraActivity
+import org.foi.rampu.geogallery.HomeActivity
 import java.util.*
 import javax.security.auth.callback.Callback
 
-class LocationTest(val activity: CameraActivity){
+class LocationTest(val activity: HomeActivity){
 
     private lateinit var locationRequest: LocationRequest
     private var country = ""
@@ -72,16 +73,7 @@ class LocationTest(val activity: CameraActivity){
                         Log.i("ADDRESS", (address + " " + country).toString())
                         object : Callback {}.run {
                             Log.i("ADDRESS CALLBACK", country)
-                            activity.locationInfo.value = mutableMapOf(
-                                "country" to country,
-                                "city" to activity.locationInfo.value?.get("city").toString(),
-                                "street" to activity.locationInfo.value?.get("street").toString()
-                            )
-                            CurrentLocationInfo.locationInfo.value = mutableMapOf(
-                            "country" to country,
-                            "city" to CurrentLocationInfo.locationInfo.value?.get("city").toString(),
-                            "street" to CurrentLocationInfo.locationInfo.value?.get("street").toString()
-                        )
+                            
 
                 }
         return country
@@ -98,16 +90,8 @@ class LocationTest(val activity: CameraActivity){
                                 ""
                         object : Callback {}.run {
                             Log.i("ADDRESS CALLBACK", city)
-                            activity.locationInfo.value = mutableMapOf(
-                                "country" to activity.locationInfo.value?.get("country").toString(),
-                                "city" to city,
-                                "street" to activity.locationInfo.value?.get("street").toString()
-                            )
-                            CurrentLocationInfo.locationInfo.value = mutableMapOf(
-                            "country" to CurrentLocationInfo.locationInfo.value?.get("country").toString(),
-                            "city" to city,
-                            "street" to CurrentLocationInfo.locationInfo.value?.get("street").toString()
-                        )
+
+
                 }
         return city
     }
@@ -120,11 +104,7 @@ class LocationTest(val activity: CameraActivity){
                             ""
                     object : Callback {}.run {
                         Log.i("ADDRESS CALLBACK", street)
-                        CurrentLocationInfo.locationInfo.value = mutableMapOf(
-                            "country" to CurrentLocationInfo.locationInfo.value?.get("country").toString(),
-                            "city" to CurrentLocationInfo.locationInfo.value?.get("city").toString(),
-                            "street" to street
-                        )
+
             }
         return street
     }
