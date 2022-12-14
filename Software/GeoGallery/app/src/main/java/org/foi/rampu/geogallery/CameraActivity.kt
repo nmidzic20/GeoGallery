@@ -243,12 +243,17 @@ class CameraActivity : AppCompatActivity() {
         )
     }
 
+    //ovo samo bitno da se spremi u uri jer ne mogu u onImageSaved pisati metapodatke nego moram
+    //u observeru gore svaki put kad se lokacija promijeni
     private fun saveLocation(uri : Uri) {
         Log.i("ADDRESS SAVE LOCATION", "came here")
         currentUri = uri
+        /*ovo sad nepotrebno jer se u homeu u location callbacku zove ovo automatski na svaku promjenu lokacije
+        samo treba izvaditi iz zajedničkog objekta trenutne lokacije - CurrentLocationInfo
         location.countryName(fusedLocationProviderClient)
+
         location.cityName(fusedLocationProviderClient)
-        location.streetName(fusedLocationProviderClient)
+        location.streetName(fusedLocationProviderClient)*/
         //metapodaci u sliku iz lastlocationfino zadnjeg elementa?
 
     }
