@@ -36,12 +36,15 @@ class MediaLocationManager {
             allSavedLocationsString = getString("all_locations_media_taken",
                 activity.resources.getString(R.string.shared_prefs_default_location_info))
 
-            allSavedLocations = Json.decodeFromString<MutableSet<SavedLocationInfo>>(allSavedLocationsString!!)
+            if (allSavedLocationsString != activity.resources.getString(R.string.shared_prefs_default_location_info))
+                allSavedLocations = Json.decodeFromString<MutableSet<SavedLocationInfo>>(allSavedLocationsString!!)
+            else
+                allSavedLocations = null
 
             Log.i("SHARED_1", allSavedLocations.toString())
         }
 
-        AllLocationsInfo.savedLocationInfo = allSavedLocations!!
+        if (allSavedLocations != null) AllLocationsInfo.savedLocationInfo = allSavedLocations!!
 
         AllLocationsInfo.savedLocationInfo.add(
             SavedLocationInfo(
