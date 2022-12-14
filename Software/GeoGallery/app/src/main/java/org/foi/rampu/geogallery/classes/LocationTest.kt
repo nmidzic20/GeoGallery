@@ -72,6 +72,11 @@ class LocationTest(val activity: HomeActivity){
                         country = address[0].countryName
                         Log.i("ADDRESS", (address + " " + country).toString())
                         object : Callback {}.run {
+                            CurrentLocationInfo.locationInfo.value = mutableMapOf(
+                                "country" to country,
+                                "city" to CurrentLocationInfo.locationInfo.value?.get("city").toString(),
+                                "street" to CurrentLocationInfo.locationInfo.value?.get("street").toString()
+                            )
                             Log.i("ADDRESS CALLBACK", country)
                             
 
@@ -89,6 +94,11 @@ class LocationTest(val activity: HomeActivity){
                             else
                                 ""
                         object : Callback {}.run {
+                            CurrentLocationInfo.locationInfo.value = mutableMapOf(
+                                "country" to CurrentLocationInfo.locationInfo.value?.get("country").toString(),
+                                "city" to city,
+                                "street" to CurrentLocationInfo.locationInfo.value?.get("street").toString()
+                            )
                             Log.i("ADDRESS CALLBACK", city)
 
 
@@ -103,6 +113,11 @@ class LocationTest(val activity: HomeActivity){
                         else
                             ""
                     object : Callback {}.run {
+                        CurrentLocationInfo.locationInfo.value = mutableMapOf(
+                            "country" to CurrentLocationInfo.locationInfo.value?.get("country").toString(),
+                            "city" to CurrentLocationInfo.locationInfo.value?.get("city").toString(),
+                            "street" to street
+                        )
                         Log.i("ADDRESS CALLBACK", street)
 
             }

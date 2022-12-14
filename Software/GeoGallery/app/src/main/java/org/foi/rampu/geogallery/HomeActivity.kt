@@ -60,12 +60,6 @@ class HomeActivity : AppCompatActivity() {
                 val street = location.streetName(currentLocation)
 
                 viewBinding.tvLocation.text = country+ "," + city+ "," + street
-
-                CurrentLocationInfo.locationInfo.value = mutableMapOf(
-                    "country" to country,
-                    "city" to city,
-                    "street" to street
-                )
             }
         }
 

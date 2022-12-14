@@ -6,8 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.PorterDuff
-import android.media.ExifInterface
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -24,18 +22,16 @@ import androidx.camera.video.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
-import androidx.lifecycle.Observer
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.gson.Gson
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
+import org.foi.rampu.geogallery.classes.*
 import org.foi.rampu.geogallery.databinding.ActivityCameraBinding
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
-import org.foi.rampu.geogallery.classes.*
 
 
 class CameraActivity : AppCompatActivity() {
@@ -132,6 +128,7 @@ class CameraActivity : AppCompatActivity() {
             }
 
         }, ContextCompat.getMainExecutor(this))
+
     }
 
     private fun takePhoto(context: Context) {
@@ -265,4 +262,7 @@ class CameraActivity : AppCompatActivity() {
             }.toTypedArray()
     }
 
+    override fun onBackPressed() {
+        return
+    }
 }
