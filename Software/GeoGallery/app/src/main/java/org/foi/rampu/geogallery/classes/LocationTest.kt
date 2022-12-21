@@ -21,6 +21,7 @@ class LocationTest(val activity: HomeActivity){
     private var city = ""
     private var street = ""
 
+    //Provjeri permissions za lokaciju u oba slucaja provjeri GPS kako bi bili sigurni da je upaljen
     fun checkLocationPermission() : Boolean{
         if(ActivityCompat.checkSelfPermission(activity,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             checkGPS()
@@ -33,32 +34,37 @@ class LocationTest(val activity: HomeActivity){
     }
 
     private fun checkGPS() {
-        locationRequest = LocationRequest()
+
+        locationRequest = LocationRequest() //Postavke za lokaciju
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         locationRequest.interval = 2000
         locationRequest.fastestInterval = 1000
 
-        val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
+        val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest) //Posalji zahtjev za lokaciju
 
         builder.setAlwaysShow(true)
 
+        //Provjeri dobivenu lokaciju
         val result = LocationServices.getSettingsClient(activity.applicationContext).checkLocationSettings(builder.build())
 
         result.addOnCompleteListener{ task ->
             try{
+                //Kada je GPS upaljen
                 val response = task.getResult(
                     ApiException::class.java
                 )
             }catch(e : ApiException){
+                //Kada je GPS ugašen
                 e.printStackTrace()
                 when(e.statusCode){
+                    //Šalji zahtjev za paljenje GPS-a
                     LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> try{
                         val resolveApiException = e as ResolvableApiException
                         resolveApiException.startResolutionForResult(activity,200)
                     }catch(sendIntentException : IntentSender.SendIntentException) {
                     }
                     LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> {
-
+                        //Kada su postavke nedosutpne
                     }
                 }
             }
@@ -66,10 +72,16 @@ class LocationTest(val activity: HomeActivity){
     }
 
     fun countryName(currentLocation: Location) : String {
+        //Provjeri vraća li Geocoder kakve informacije kako bi spriječili rušenje aplikacije ili vraćanje praznog string-a
+        //prilikom stalnog dobivanja lokacije. Inicijalizacija Geocodera te zatim dodavanje geocoderu latitude i longitudude od trenune lokacije kako bi
+        // mogli dobiti povratnu informaciju  države, grada i ulice. U country se sprema string "dešifrirane" lokacije povezan sa državom.
+        // Kako bi se spriječio povratak praznog stringa napravila se callback funkcija koja tek kada dobije vrijednost spremi tu vrijednost u mapu.
+        ///U ovom slučaju sprema se država, a ostale vrijednosti ako postoje samo se ponovo prepisuju kako bi spriječili da ako već postoje da ih
+        // slučajno ne izbrišemo. Na kraju vraća se naziv države.
+
         if(Geocoder(activity,Locale.getDefault()) != null) {
             val geoCoder = Geocoder(activity, Locale.getDefault())
-            val address =
-                geoCoder.getFromLocation(currentLocation.latitude, currentLocation.longitude, 1)
+            val address = geoCoder.getFromLocation(currentLocation.latitude, currentLocation.longitude, 1)
             country = address[0].countryName
             Log.i("ADDRESS", (address + " " + country).toString())
             object : Callback {}.run {
@@ -85,10 +97,17 @@ class LocationTest(val activity: HomeActivity){
     }
 
     fun cityName(currentLocation: Location) : String {
+        //Provjeri vraća li Geocoder kakve informacije kako bi spriječili rušenje aplikacije ili vraćanje praznog string-a
+        //prilikom stalnog dobivanja lokacije. Inicijalizacija Geocodera te zatim dodavanje geocoderu latitude i longitudude od trenune lokacije kako bi
+        // mogli dobiti povratnu informaciju  države, grada i ulice. U city se sprema string "dešifrirane" lokacije povezan sa gradom. Prije samog callbacka
+        //kako bi program radio brže stavljen je if uvjet koji ispituje više slučajeva prije nego vrati prazan string.
+        // Kako bi se spriječio povratak praznog stringa napravila se callback funkcija koja tek kada dobije vrijednost spremi tu vrijednost u mapu.
+        ///U ovom slučaju sprema se grad, a ostale vrijednosti ako postoje samo se ponovo prepisuju kako bi spriječili da ako već postoje da ih
+        // slučajno ne izbrišemo. Na kraju vraća se naziv grada.
+
         if(Geocoder(activity,Locale.getDefault()) != null) {
             val geoCoder = Geocoder(activity, Locale.getDefault())
-            val address =
-                geoCoder.getFromLocation(currentLocation.latitude, currentLocation.longitude, 1)
+            val address = geoCoder.getFromLocation(currentLocation.latitude, currentLocation.longitude, 1)
             city = if (address[0].locality != null)
                 address[0].locality
             else if (address[0].subAdminArea != null)
@@ -106,7 +125,16 @@ class LocationTest(val activity: HomeActivity){
         }
         return city
     }
+
     fun streetName(currentLocation: Location) : String{
+        //Provjeri vraća li Geocoder kakve informacije kako bi spriječili rušenje aplikacije ili vraćanje praznog string-a
+        //prilikom stalnog dobivanja lokacije. Inicijalizacija Geocodera te zatim dodavanje geocoderu latitude i longitudude od trenune lokacije kako bi
+        // mogli dobiti povratnu informaciju  države, grada i ulice. U street se sprema string "dešifrirane" lokacije povezan sa ulicom. Prije samog callbacka
+        //kako bi program radio brže stavljen je if uvjet koji ispituje slučaj prije nego vrati prazan string.
+        // Kako bi se spriječio povratak praznog stringa napravila se callback funkcija koja tek kada dobije vrijednost spremi tu vrijednost u mapu.
+        ///U ovom slučaju sprema se ulica, a ostale vrijednosti ako postoje samo se ponovo prepisuju kako bi spriječili da ako već postoje da ih
+        // slučajno ne izbrišemo. Na kraju vraća se naziv ulice.
+
         if(Geocoder(activity,Locale.getDefault()) != null) {
             val geoCoder = Geocoder(activity, Locale.getDefault())
             val address =
