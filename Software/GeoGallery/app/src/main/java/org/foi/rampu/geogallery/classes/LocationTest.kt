@@ -66,55 +66,64 @@ class LocationTest(val activity: HomeActivity){
     }
 
     fun countryName(currentLocation: Location) : String {
-                        val geoCoder = Geocoder(activity, Locale.getDefault())
-                        val address = geoCoder.getFromLocation(currentLocation.latitude, currentLocation.longitude, 1)
-                        country = address[0].countryName
-                        Log.i("ADDRESS", (address + " " + country).toString())
-                        object : Callback {}.run {
-                            Log.i("ADDRESS CALLBACK", country)
-                            activity.locationInfo.value = mutableMapOf(
-                                "country" to country,
-                                "city" to activity.locationInfo.value?.get("city").toString(),
-                                "street" to activity.locationInfo.value?.get("street").toString()
-                            )
-                }
+        if(Geocoder(activity,Locale.getDefault()) != null) {
+            val geoCoder = Geocoder(activity, Locale.getDefault())
+            val address =
+                geoCoder.getFromLocation(currentLocation.latitude, currentLocation.longitude, 1)
+            country = address[0].countryName
+            Log.i("ADDRESS", (address + " " + country).toString())
+            object : Callback {}.run {
+                Log.i("ADDRESS CALLBACK", country)
+                activity.locationInfo.value = mutableMapOf(
+                    "country" to country,
+                    "city" to activity.locationInfo.value?.get("city").toString(),
+                    "street" to activity.locationInfo.value?.get("street").toString()
+                )
+            }
+        }
         return country
     }
 
     fun cityName(currentLocation: Location) : String {
-                        val geoCoder = Geocoder(activity, Locale.getDefault())
-                        val address = geoCoder.getFromLocation(currentLocation.latitude, currentLocation.longitude, 1)
-                        city = if (address[0].locality != null)
-                                address[0].locality
-                            else if (address[0].subAdminArea != null)
-                                address[0].subAdminArea
-                            else
-                                ""
-                        object : Callback {}.run {
-                            Log.i("ADDRESS CALLBACK", city)
-                            activity.locationInfo.value = mutableMapOf(
-                                "country" to activity.locationInfo.value?.get("country").toString(),
-                                "city" to city,
-                                "street" to activity.locationInfo.value?.get("street").toString()
-                            )
-                }
+        if(Geocoder(activity,Locale.getDefault()) != null) {
+            val geoCoder = Geocoder(activity, Locale.getDefault())
+            val address =
+                geoCoder.getFromLocation(currentLocation.latitude, currentLocation.longitude, 1)
+            city = if (address[0].locality != null)
+                address[0].locality
+            else if (address[0].subAdminArea != null)
+                address[0].subAdminArea
+            else
+                ""
+            object : Callback {}.run {
+                Log.i("ADDRESS CALLBACK", city)
+                activity.locationInfo.value = mutableMapOf(
+                    "country" to activity.locationInfo.value?.get("country").toString(),
+                    "city" to city,
+                    "street" to activity.locationInfo.value?.get("street").toString()
+                )
+            }
+        }
         return city
     }
     fun streetName(currentLocation: Location) : String{
-                    val geoCoder = Geocoder(activity, Locale.getDefault())
-                    val address = geoCoder.getFromLocation(currentLocation.latitude, currentLocation.longitude, 1)
-                    street = if (address[0].thoroughfare != null)
-                            address[0].thoroughfare
-                        else
-                            ""
-                    object : Callback {}.run {
-                        Log.i("ADDRESS CALLBACK", street)
-                        activity.locationInfo.value = mutableMapOf(
-                            "country" to activity.locationInfo.value?.get("country").toString(),
-                            "city" to activity.locationInfo.value?.get("city").toString(),
-                            "street" to street
-                        )
+        if(Geocoder(activity,Locale.getDefault()) != null) {
+            val geoCoder = Geocoder(activity, Locale.getDefault())
+            val address =
+                geoCoder.getFromLocation(currentLocation.latitude, currentLocation.longitude, 1)
+            street = if (address[0].thoroughfare != null)
+                address[0].thoroughfare
+            else
+                ""
+            object : Callback {}.run {
+                Log.i("ADDRESS CALLBACK", street)
+                activity.locationInfo.value = mutableMapOf(
+                    "country" to activity.locationInfo.value?.get("country").toString(),
+                    "city" to activity.locationInfo.value?.get("city").toString(),
+                    "street" to street
+                )
             }
+        }
         return street
     }
 }
