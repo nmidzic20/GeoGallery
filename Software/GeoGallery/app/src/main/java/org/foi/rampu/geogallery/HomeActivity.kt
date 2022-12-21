@@ -60,6 +60,11 @@ class HomeActivity : AppCompatActivity() {
         startLocationUpdates()
         location.checkLocationPermission()
 
+        viewBinding.ibtnGoogleMaps.setOnClickListener{
+            val intent = Intent(this, GoogleMapsActivity::class.java)
+            startActivity(intent)
+        }
+
         viewBinding.ibtnLocation.setOnClickListener{
             location.checkLocationPermission()
         }
