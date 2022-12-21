@@ -17,48 +17,62 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onStart() {
+
         super.onStart()
-        val currentUser = firebaseAuth.currentUser
-        if(currentUser != null)
+        val currentUser = firebaseAuth.currentUser //Čim se aplikacija pokrene dohvati usera
+        if(currentUser != null) //Ako ima usera update-aj UI
             updateUI()
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         viewBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
 
-        firebaseAuth = Firebase.auth
+        firebaseAuth = Firebase.auth    //Inicijaliacija Firebase-a
 
-        viewBinding.tvNoAccount.setOnClickListener {
-            startActivity(Intent(this, RegisterActivity::class.java))
-            finish()
+        viewBinding.tvNoAccount.setOnClickListener {    //Na klik naziva nemate račun
+
+            startActivity(Intent(this, RegisterActivity::class.java))   //Pokreni Register activity
+            finish()    //Onemogući klik na gumb za nazad
+
         }
 
-       viewBinding.btnLogin.setOnClickListener {
-            performLogin()
+       viewBinding.btnLogin.setOnClickListener {    //Klik na login gumb
+
+            performLogin() //Odrađuje login logiku
+
        }
 
         viewBinding.button.setOnClickListener {
+
             startActivity(Intent(this, HomeActivity::class.java))
             finish()
+
         }
     }
 
     private fun performLogin() {
-        val email = viewBinding.etEmail
-        val password = viewBinding.etPassword
 
-        if(email.text.isEmpty() || password.text.isEmpty()){
-            Toast.makeText(this, "Please fill alll the fileds", Toast.LENGTH_SHORT).show()
+        val email = viewBinding.etEmail //Dohvati edit text za email
+        val password = viewBinding.etPassword //Dohvati edit text za lozinke
+
+        if(email.text.isEmpty() || password.text.isEmpty()){ //Provjeri jesu li edit text-ovi za email ili lozinku prazni
+            Toast.makeText(this, "Please fill alll the fileds", Toast.LENGTH_SHORT).show() //Ako jesu prikaži Toast sa porukom
+                                                                                                        // da korisnik popuni polja
             return
         }
 
-        val emailInput = email.text.toString()
-        val passwordInput = password.text.toString()
+        val emailInput = email.text.toString() //Dohvati upisanu vrijednost u edit textu emaila
+        val passwordInput = password.text.toString() //Dohvati upisanu vrijednost u edit textu lozinke
 
-        firebaseAuth.signInWithEmailAndPassword(emailInput,passwordInput)
+        firebaseAuth.signInWithEmailAndPassword(emailInput,passwordInput) //firebasova funkcija za signin sa emailom gdje se
+                                                                        //prosljeđuje upisani email i lozinka
             .addOnCompleteListener(this){ task ->
+                //Kada je dovršena provjera, provjeri je li uspješno obavljena, odnosno je li potvrda uspješna
+                //Ako je update-aj UI, a ako nije prikaži korisniku Toast sa porukom neuspješne autentifikacije
                 if(task.isSuccessful){
                     updateUI()
                 }
@@ -67,13 +81,18 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             .addOnFailureListener{
+                //Osluškivač neuspjeha, ako je autentifikacija neuspjela ili je došlo do neke greške prikaži korisniku Toast
+                //sa porukom neuspjele autentifikacije te grešku
                 Toast.makeText(baseContext, "Authentication failed: ${it.localizedMessage}", Toast.LENGTH_SHORT).show()
             }
+
     }
 
     private fun updateUI() {
-        startActivity(Intent(this, HomeActivity::class.java))
-        finish()
+
+        startActivity(Intent(this, HomeActivity::class.java)) //Prijeđi na Home activity
+        finish() //Onemogući klik na gumb za nazad
     }
+
 }
 
