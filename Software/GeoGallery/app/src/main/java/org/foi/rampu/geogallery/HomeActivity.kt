@@ -34,7 +34,7 @@ class HomeActivity : AppCompatActivity() {
     lateinit var viewBinding: ActivityHomeBinding
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-    val location = LocationTest(this)
+    val location = LocationTest(this) //Inicijalizacija LocationTest klase
 
     private lateinit var locationCallback: LocationCallback
     private val locationPermissionCode = 2
@@ -47,11 +47,12 @@ class HomeActivity : AppCompatActivity() {
         viewBinding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
 
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this) //Inicijalizacija providera za lokaciju
 
+        addressResultReceiver = LocationAddressResultReceiver(Handler()) //Receiver za dobivenu adresu
 
-        addressResultReceiver = LocationAddressResultReceiver(Handler())
-        locationCallback = object : LocationCallback(){
+        locationCallback = object : LocationCallback(){ //Callback za lokaciju koji će prilikom dobivene lokacije biti pozvan
+
             override fun onLocationResult(locationResult: LocationResult) {
                 currentLocation = locationResult.locations[0]
 
@@ -63,8 +64,13 @@ class HomeActivity : AppCompatActivity() {
             }
         }
 
-        startLocationUpdates()
-        location.checkLocationPermission()
+        startLocationUpdates() //Funkcija za konstantno dobivanje lokacije (Non stop ažuriranje lokacije korisnika)
+        location.checkLocationPermission() //Prilikom pokretanja provjeri dopuštenja za lokaciju
+
+        viewBinding.ibtnGoogleMaps.setOnClickListener{
+            val intent = Intent(this, GoogleMapsActivity::class.java)
+            startActivity(intent)
+        }
 
         viewBinding.ibtnLocation.setOnClickListener{
             location.checkLocationPermission()
@@ -81,14 +87,15 @@ class HomeActivity : AppCompatActivity() {
         }
 
         viewBinding.btnLogout.setOnClickListener{
-            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN) //Dohvati logiranog korisnika
                 .requestEmail()
                 .build()
 
             val googleSignInClient = GoogleSignIn.getClient(this, gso)
-            googleSignInClient.signOut()
+            googleSignInClient.signOut() //Odlogiraj korisnika kako bi bili sigurni da će prilikom
+                                        // sljedećeg pokretanja biti potreban login
 
-            Firebase.auth.signOut()
+            Firebase.auth.signOut() //Odlogiraj nas sa firebasea
             startActivity(Intent(applicationContext, MainActivity::class.java))
 
         }
@@ -133,8 +140,10 @@ class HomeActivity : AppCompatActivity() {
         if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 locationPermissionCode)
+            //Provjeri dopuštenja za lokaciju
         }
         else {
+            //Pokreni lokaciju
             val locationRequest = LocationRequest()
             locationRequest.interval = 2000
             locationRequest.fastestInterval = 1000
@@ -144,6 +153,9 @@ class HomeActivity : AppCompatActivity() {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        //Provjeri pristpni kod sa pristupnim kodom lokacije i ako su dobivena dopuštenja provjeri dopuštenja za lokaciju
+        // i pokreni dobivanje lokacije
+
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == locationPermissionCode) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -158,7 +170,11 @@ class HomeActivity : AppCompatActivity() {
         override fun onReceiveResult(resultCode: Int, resultData: Bundle) {
         }
     }
+
     override fun onResume() {
+        //Ako se aplikacija ugasi i ponovo pokrene provjeri dopuštenja za lokaciju
+        // i pokreni dobivanje lokacije
+
         super.onResume()
         startLocationUpdates()
         location.checkLocationPermission()
