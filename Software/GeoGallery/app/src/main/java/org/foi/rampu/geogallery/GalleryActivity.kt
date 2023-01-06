@@ -5,11 +5,14 @@ import android.os.Bundle
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import org.foi.rampu.geogallery.adapters.GalleryPagerAdapter
 import org.foi.rampu.geogallery.classes.PhotoGallery
+import org.foi.rampu.geogallery.classes.Statistics
 import org.foi.rampu.geogallery.classes.VideoGallery
 import org.foi.rampu.geogallery.ws.LocationInfoManager
 import org.foi.rampu.geogallery.databinding.ActivityGalleryBinding
@@ -24,11 +27,18 @@ class GalleryActivity : AppCompatActivity() {
     lateinit var tabLayout: TabLayout
     lateinit var viewPager2: ViewPager2
 
+    lateinit var navDrawerLayout: DrawerLayout
+    lateinit var navView: NavigationView
+
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityGalleryBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
+
+        //navigation drawer
+        navDrawerLayout = viewBinding.drawerLayout
+        navView = viewBinding.navView
 
         tabLayout = findViewById(R.id.tabs)
         viewPager2 = findViewById(R.id.viewpager)
@@ -53,6 +63,16 @@ class GalleryActivity : AppCompatActivity() {
         TabLayoutMediator(tabLayout, viewPager2) { tab, position ->
             tab.setText(galleryPagerAdapter.fragmentItems[position].titleRes)
         }.attach()
+
+        //navigation drawer
+        navView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.title) {
+                "Statistics" -> Statistics.showDialog(this)
+                //Toast.makeText(this, "Prozor", Toast.LENGTH_SHORT).show()
+            }
+            navDrawerLayout.closeDrawers()
+            return@setNavigationItemSelectedListener true
+        }
 
     }
 
