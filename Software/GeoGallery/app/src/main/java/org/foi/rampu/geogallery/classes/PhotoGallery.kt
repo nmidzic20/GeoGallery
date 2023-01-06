@@ -2,6 +2,7 @@ package org.foi.rampu.geogallery.classes
 
 import android.content.ContentUris
 import android.content.Intent
+import android.media.ExifInterface
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
@@ -11,6 +12,8 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.FragmentActivity
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.foi.rampu.geogallery.GalleryActivity
 import org.foi.rampu.geogallery.fragments.GalleryFragment
 
@@ -23,7 +26,9 @@ class PhotoGallery(val galleryFragment: GalleryFragment) {
         val selection : String? = null
         val selectionArgs = arrayOf<String>()
         val sortOrder : String? = null
+        var mediaLocationManager : MediaLocationManager = MediaLocationManager()
 
+        //fetch all images from MediaStore
         galleryFragment.activity?.applicationContext?.contentResolver?.query(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             projection,
@@ -32,6 +37,7 @@ class PhotoGallery(val galleryFragment: GalleryFragment) {
             sortOrder
         )?.use { cursor ->
             while (cursor.moveToNext()) {
+
                 val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
                 val id = cursor.getLong(idColumn)
                 var contentUri: Uri = ContentUris.withAppendedId(
@@ -41,7 +47,23 @@ class PhotoGallery(val galleryFragment: GalleryFragment) {
 
                 val imgUri = Uri.parse(contentUri.toString())
                 Log.i("URI", imgUri.toString())
-                createImageView(imgUri)
+
+                //var locationMetadata = mediaLocationManager.getLocationMetadata(galleryFragment, imgUri)
+
+                var locationMetadata = mediaLocationManager.getLocationFromMediaName(imgUri,
+                    this.galleryFragment.requireActivity()
+                )
+
+                //display image only if its location metadata matches folder location name
+                Log.i("IMAGE_SHOWN?", locationMetadata.toString() + " " + galleryFragment.folderName)
+
+                if (locationMetadata.street == galleryFragment.folderName)
+                {
+                    createImageView(imgUri)
+                    Log.i("IMAGE_SHOWN?", "yes")
+                }
+                else
+                    Log.i("IMAGE_SHOWN?", "no")
 
             }
         }

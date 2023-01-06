@@ -8,20 +8,22 @@
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/constraintLayout"
         tools:context=".HomeActivity">
 
         <GridLayout
             android:id="@+id/gridLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:columnCount="4"
             android:rowCount="5"
-            tools:context=".MainActivity"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="-29dp">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:context=".MainActivity">
 
         </GridLayout>
 
@@ -33,7 +35,8 @@
             app:layout_constraintBottom_toBottomOf="@+id/gridLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"></TextView>
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="500dp"></TextView>
 
         <ImageButton
             android:id="@+id/ibtnCamera"
@@ -49,7 +52,6 @@
             android:id="@+id/ibtnAudio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="0dp"
             app:layout_constraintBottom_toTopOf="@+id/ibtnCamera"
             app:layout_constraintEnd_toEndOf="@+id/ibtnCamera"
             app:layout_constraintTop_toTopOf="parent"
@@ -65,10 +67,11 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.954"
             app:srcCompat="@drawable/ic_baseline_location_on_24" />
+
         <ImageButton
+            android:id="@+id/ibtnGoogleMaps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/ibtnGoogleMaps"
             app:layout_constraintBottom_toTopOf="@+id/ibtnLocation"
             app:layout_constraintEnd_toEndOf="@+id/ibtnLocation"
             app:layout_constraintTop_toTopOf="parent"
@@ -85,6 +88,18 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
+        <ImageButton
+            android:id="@+id/ibtnFolderBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="0"
+            android:layout_column="0"
+            app:layout_constraintBottom_toBottomOf="@+id/gridLayout"
+            app:layout_constraintEnd_toStartOf="@+id/ibtnCamera"
+            app:layout_constraintStart_toEndOf="@+id/btnLogout"
+            app:srcCompat="@drawable/ic_arrow_back"
+            android:layout_marginBottom="10dp">
 
+        </ImageButton>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

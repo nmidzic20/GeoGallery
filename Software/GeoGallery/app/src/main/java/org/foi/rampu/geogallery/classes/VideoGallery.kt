@@ -31,6 +31,7 @@ class VideoGallery(val galleryFragment: GalleryFragment) {
         val selection : String? = null
         val selectionArgs = arrayOf<String>()
         val sortOrder : String? = null
+        var mediaLocationManager : MediaLocationManager = MediaLocationManager()
 
         galleryFragment.activity?.applicationContext?.contentResolver?.query(
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
@@ -50,9 +51,24 @@ class VideoGallery(val galleryFragment: GalleryFragment) {
                 val videoUri = Uri.parse(contentUri.toString())
                 Log.i("URI", videoUri.toString())
 
-                val thumbnail = galleryFragment.requireActivity().applicationContext.contentResolver.loadThumbnail(videoUri, Size(500, 500), null)
 
-                createVideoView(videoUri, thumbnail)
+                var locationMetadata = mediaLocationManager.getLocationFromMediaName(videoUri,
+                    this.galleryFragment.requireActivity()
+                )
+
+                //display video only if its location metadata matches folder location name
+                Log.i("VIDEO_SHOWN?", locationMetadata.toString() + " " + galleryFragment.folderName)
+
+                if (locationMetadata.street == galleryFragment.folderName)
+                {
+                    val thumbnail = galleryFragment.requireActivity().applicationContext.contentResolver.loadThumbnail(videoUri, Size(500, 500), null)
+
+                    createVideoView(videoUri, thumbnail)
+                    Log.i("VIDEO_SHOWN?", "yes")
+                }
+                else
+                    Log.i("VIDEO_SHOWN?", "no")
+
 
             }
         }
