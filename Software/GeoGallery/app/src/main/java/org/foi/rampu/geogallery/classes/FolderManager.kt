@@ -99,6 +99,9 @@ class FolderManager(val activity: HomeActivity) {
             val (iv, tv) = createFolderIcon(location.street, LocationCategory.STREET)
             iv.setOnClickListener {
 
+                //from the street folder open media gallery, but include city name into message
+                //so that media can be sorted by folder (street) name, while wiki information will use city name
+                //to show info about that city
                 val intent = Intent(activity, GalleryActivity::class.java)
                 val poruka : String = tv.text.toString() + "_" + city
                 intent.putExtra("FOLDER_NAME", poruka)
@@ -175,12 +178,6 @@ class FolderManager(val activity: HomeActivity) {
         val color = activity.resources.getColor(colorId)
 
         ivFolder.setColorFilter(color)
-    }
-
-    fun checkIfFolderIconExistsForLocation(location : String): Boolean
-    {
-        val folderIcon : ImageView? = activity.viewBinding.gridLayout.findViewWithTag(location)
-        return folderIcon != null
     }
 
     fun getFolderIconsCount() : Int
