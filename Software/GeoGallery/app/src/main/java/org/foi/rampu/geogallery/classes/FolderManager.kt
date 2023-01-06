@@ -3,8 +3,9 @@ package org.foi.rampu.geogallery.classes
 import android.content.Intent
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.View
+import android.view.View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION
 import android.view.ViewGroup
-import android.widget.AbsListView
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -23,8 +24,92 @@ class FolderManager(val activity: HomeActivity) {
         PURPLE(R.color.purple_200)
     }
 
+    fun createFolderIconsCountries()
+    {
+        activity.viewBinding.ibtnFolderBack.visibility = View.GONE
 
-    fun createFolderIcon(locationName: String)
+        //prevent country folder duplication for e.g. items like {Croatia, Osijek, ...} and {Croatia, Zagreb, ...}
+        //which are distinct items in MutableSet, but would create two folders Croatia since here we care only
+        //about country names
+        val locationsList = mutableListOf<String>()
+        AllLocationsInfo.savedLocationInfo.forEach { locationsList.add(it.country) }
+        val locationsSet = locationsList.toSet()
+
+        for (country in locationsSet)
+        {
+            val (iv, tv) = createFolderIcon(country, LocationCategory.COUNTRY)
+            iv.setOnClickListener {
+
+                activity.viewBinding.gridLayout.removeAllViews()
+
+                createFolderIconCities(country)
+            }
+        }
+    }
+
+    fun createFolderIconCities(country : String)
+    {
+        activity.viewBinding.ibtnFolderBack.visibility = View.VISIBLE
+        activity.viewBinding.ibtnFolderBack.setOnClickListener {
+
+            //pobrisat foldere imena gradova
+            activity.viewBinding.gridLayout.removeAllViews()
+
+            createFolderIconsCountries()
+        }
+
+        val locationsOfCountryList = AllLocationsInfo.savedLocationInfo.filter { it.country == country }
+        val locationsOfCountry = locationsOfCountryList.toSet()
+
+        //now that we've found all cities belonging to this country, filter so that no duplicate cities
+        //in case we took media in different streets of same city, which is still two distinct locations in set
+        //but here we care only about city names
+        val locationsList = mutableListOf<String>()
+        locationsOfCountry.forEach { locationsList.add(it.city) }
+        val locationsSet = locationsList.toSet()
+
+        for (city in locationsSet)
+        {
+            val (iv, tv) = createFolderIcon(city, LocationCategory.CITY)
+            iv.setOnClickListener {
+
+                activity.viewBinding.gridLayout.removeAllViews()
+
+                createFolderIconStreets(city, country)
+            }
+        }
+
+    }
+
+    fun createFolderIconStreets(city: String, country : String)
+    {
+        activity.viewBinding.ibtnFolderBack.setOnClickListener {
+
+            //pobrisat foldere imena ulica
+            activity.viewBinding.gridLayout.removeAllViews()
+
+            createFolderIconCities(country)
+        }
+
+        val locationsOfCityList = AllLocationsInfo.savedLocationInfo.filter { it.city == city }
+        val locationsOfCity = locationsOfCityList.toSet()
+
+        for (location in locationsOfCity)
+        {
+            val (iv, tv) = createFolderIcon(location.street, LocationCategory.STREET)
+            iv.setOnClickListener {
+
+                val intent = Intent(activity, GalleryActivity::class.java)
+                val poruka : String = tv.text.toString() + "_" + city
+                intent.putExtra("FOLDER_NAME", poruka)
+                activity.startActivity(intent)
+
+            }
+        }
+    }
+
+
+    fun createFolderIcon(locationName: String, locationCategory: LocationCategory) : Pair<ImageView, TextView>
     {
         val layout = activity.viewBinding.gridLayout as ViewGroup
         val linearLayout = setLayout()
@@ -32,18 +117,15 @@ class FolderManager(val activity: HomeActivity) {
         val ivFolder = createFolderImage()
         val tvFolderName = createLocationName(locationName)
 
-        ivFolder.tag = tvFolderName.text.toString()
-
-        ivFolder.setOnClickListener {
-            val intent = Intent(activity, GalleryActivity::class.java)
-            intent.putExtra("FOLDER_NAME", tvFolderName.text)
-            activity.startActivity(intent)
-        }
+        ivFolder.contentDescription = locationCategory.toString()//tvFolderName.text.toString()
+        tvFolderName.contentDescription = locationCategory.toString()//tvFolderName.text.toString()
 
         linearLayout.addView(ivFolder)
         linearLayout.addView(tvFolderName)
 
         layout.addView(linearLayout)
+
+        return ivFolder to tvFolderName
     }
 
     fun setLayout(): LinearLayout

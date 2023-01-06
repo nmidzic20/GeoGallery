@@ -27,7 +27,7 @@ class LocationInfoFragment : Fragment() {
 
         val locationInfoManager = LocationInfoManager(this)
 
-        val folderName = activity?.intent?.getStringExtra("FOLDER_NAME")
+        val folderName = activity?.intent?.getStringExtra("FOLDER_NAME")?.split("_")?.get(1)
         Log.i("FOLDER", folderName!!)
 
         locationInfoManager.loadLocationInfo(folderName!!)

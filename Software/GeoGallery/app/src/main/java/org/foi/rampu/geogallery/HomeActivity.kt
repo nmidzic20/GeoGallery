@@ -16,6 +16,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import org.foi.rampu.geogallery.databinding.ActivityHomeBinding
 import android.os.ResultReceiver
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -114,10 +115,13 @@ class HomeActivity : AppCompatActivity() {
 
         Log.i("HOME DESERIALISED ", locations.toString())
 
-        var size = locations.size
+        if (locations != null) AllLocationsInfo.savedLocationInfo = locations!!
+
+
+        var size = AllLocationsInfo.savedLocationInfo.size
         Log.i("HOME ACTIVITY SIZE", size.toString())
 
-
+        /*var ivCityFolder : ImageView? = null
 
         if (size != 0)
         {
@@ -125,8 +129,14 @@ class HomeActivity : AppCompatActivity() {
             {
                 Log.i("HOMECITY", location.city)
                 if (location.city != "" && location.city != null)
-                    folderManager.createFolderIcon(location.city)
+                    ivCityFolder = folderManager.createFolderIcon(location.city, LocationCategory.CITY, null)
+                if (location.country != "" && location.country != null)
+                    folderManager.createFolderIcon(location.country, LocationCategory.COUNTRY, ivCityFolder)
             }
+        }*/
+        if (size != 0)
+        {
+            folderManager.createFolderIconsCountries()
         }
 
     }

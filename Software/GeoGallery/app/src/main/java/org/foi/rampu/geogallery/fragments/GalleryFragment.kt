@@ -29,7 +29,7 @@ class GalleryFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        folderName = activity?.intent?.getStringExtra("FOLDER_NAME")
+        folderName = activity?.intent?.getStringExtra("FOLDER_NAME")?.split("_")?.get(0)
 
         val photoGallery = PhotoGallery(this)
         val videoGallery = VideoGallery(this)

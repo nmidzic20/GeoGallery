@@ -57,7 +57,7 @@ class PhotoGallery(val galleryFragment: GalleryFragment) {
                 //display image only if its location metadata matches folder location name
                 Log.i("IMAGE_SHOWN?", locationMetadata.toString() + " " + galleryFragment.folderName)
 
-                if (locationMetadata.city == galleryFragment.folderName)
+                if (locationMetadata.street == galleryFragment.folderName)
                 {
                     createImageView(imgUri)
                     Log.i("IMAGE_SHOWN?", "yes")

@@ -59,7 +59,7 @@ class VideoGallery(val galleryFragment: GalleryFragment) {
                 //display video only if its location metadata matches folder location name
                 Log.i("VIDEO_SHOWN?", locationMetadata.toString() + " " + galleryFragment.folderName)
 
-                if (locationMetadata.city == galleryFragment.folderName)
+                if (locationMetadata.street == galleryFragment.folderName)
                 {
                     val thumbnail = galleryFragment.requireActivity().applicationContext.contentResolver.loadThumbnail(videoUri, Size(500, 500), null)
 
