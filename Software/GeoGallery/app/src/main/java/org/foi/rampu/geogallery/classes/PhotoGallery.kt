@@ -54,7 +54,6 @@ class PhotoGallery(val galleryFragment: GalleryFragment) {
                     this.galleryFragment.requireActivity()
                 )
 
-
                 //display image only if its location metadata matches folder location name
                 Log.i("IMAGE_SHOWN?", locationMetadata.toString() + " " + galleryFragment.folderName)
 

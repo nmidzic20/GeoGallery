@@ -51,21 +51,23 @@ class VideoGallery(val galleryFragment: GalleryFragment) {
                 val videoUri = Uri.parse(contentUri.toString())
                 Log.i("URI", videoUri.toString())
 
-                //var locationMetadata = mediaLocationManager.getLocationMetadata(galleryFragment, videoUri)
+
+                var locationMetadata = mediaLocationManager.getLocationFromMediaName(videoUri,
+                    this.galleryFragment.requireActivity()
+                )
 
                 //display video only if its location metadata matches folder location name
-                //Log.i("VIDEO_SHOWN?", locationMetadata.toString() + " " + galleryFragment.folderName)
+                Log.i("VIDEO_SHOWN?", locationMetadata.toString() + " " + galleryFragment.folderName)
 
-                //if (locationMetadata.city == galleryFragment.folderName)
-                //{
+                if (locationMetadata.city == galleryFragment.folderName)
+                {
                     val thumbnail = galleryFragment.requireActivity().applicationContext.contentResolver.loadThumbnail(videoUri, Size(500, 500), null)
 
                     createVideoView(videoUri, thumbnail)
                     Log.i("VIDEO_SHOWN?", "yes")
-                //}
-                //else
-                    //Log.i("VIDEO_SHOWN?", "no")
-
+                }
+                else
+                    Log.i("VIDEO_SHOWN?", "no")
 
 
             }

@@ -136,10 +136,9 @@ class CameraActivity : AppCompatActivity() {
 
         mediaLocationManager.saveLocationsFromSharedPrefsToAllLocationsInfo(context,this)
         var data = CurrentLocationInfo.locationInfo.value
-        Log.i("DATA_TAKE_PHOTO", data.toString())
+        Log.i("DATA", "photo name " + data.toString())
         var dataString = Json.encodeToString(data)
-        val name = dataString
-            //SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis())
+        val name = dataString + SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis())
 
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
@@ -170,7 +169,7 @@ class CameraActivity : AppCompatActivity() {
                     Log.d(TAG, msg)
 
                     //exif variant with saving location to photo metadata
-                    mediaLocationManager.saveLocation(output.savedUri!!, context, this@CameraActivity)
+                    //mediaLocationManager.saveLocation(output.savedUri!!, context, this@CameraActivity)
                 }
             }
         )
@@ -190,8 +189,12 @@ class CameraActivity : AppCompatActivity() {
             return
         }
 
-        val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
-            .format(System.currentTimeMillis())
+        mediaLocationManager.saveLocationsFromSharedPrefsToAllLocationsInfo(context,this)
+        var data = CurrentLocationInfo.locationInfo.value
+        Log.i("DATA", "video name" + data.toString())
+        var dataString = Json.encodeToString(data)
+        val name = dataString + SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis())
+
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
             put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4")
