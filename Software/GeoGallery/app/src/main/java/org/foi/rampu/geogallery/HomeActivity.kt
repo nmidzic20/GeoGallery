@@ -8,18 +8,26 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import androidx.lifecycle.MutableLiveData
+import android.content.Context
+import android.provider.ContactsContract
+import android.util.Log
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.location.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import org.foi.rampu.geogallery.classes.FolderManager
-import org.foi.rampu.geogallery.classes.LocationTest
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import org.foi.rampu.geogallery.databinding.ActivityHomeBinding
 import android.os.ResultReceiver
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.decodeFromString
+import org.foi.rampu.geogallery.classes.*
+
 
 class HomeActivity : AppCompatActivity() {
 
@@ -27,15 +35,6 @@ class HomeActivity : AppCompatActivity() {
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     val location = LocationTest(this) //Inicijalizacija LocationTest klase
-
-    //Mapa koja će se prilikom callbacka iz klase Location test popunit vrijednostima
-    var locationInfo : MutableLiveData<MutableMap<String, String>> = MutableLiveData(
-        mutableMapOf(
-            "country" to "",
-            "city" to "",
-            "street" to ""
-        )
-    )
 
     private lateinit var locationCallback: LocationCallback
     private val locationPermissionCode = 2
@@ -53,9 +52,15 @@ class HomeActivity : AppCompatActivity() {
         addressResultReceiver = LocationAddressResultReceiver(Handler()) //Receiver za dobivenu adresu
 
         locationCallback = object : LocationCallback(){ //Callback za lokaciju koji će prilikom dobivene lokacije biti pozvan
+
             override fun onLocationResult(locationResult: LocationResult) {
                 currentLocation = locationResult.locations[0]
-                viewBinding.tvLocation.text = location.countryName(currentLocation)+ "," + location.cityName(currentLocation)+ "," + location.streetName(currentLocation)
+
+                val country = location.countryName(currentLocation)
+                val city = location.cityName(currentLocation)
+                val street = location.streetName(currentLocation)
+
+                viewBinding.tvLocation.text = country+ "," + city+ "," + street
             }
         }
 
@@ -99,10 +104,36 @@ class HomeActivity : AppCompatActivity() {
 
         val mockLocations = listOf<String>("Zagreb", "Varaždin", "Rijeka", "Graz", "Rome", "Dubrovnik",
             "Trieste", "Venice", "Osijek", "Pula")
-        for (i in 0..9)
+
+
+
+        val prefs = getSharedPreferences("locations_preferences", Context.MODE_PRIVATE)
+        //prefs.edit().remove("all_locations_media_taken").commit();
+
+        var locsString = prefs.getString("all_locations_media_taken", resources.getString(R.string.shared_prefs_default_location_info))
+        Log.i("HOME ACTIVITY ", locsString.toString())
+
+        var obj = mutableListOf<SavedLocationInfo>()
+        if (locsString != resources.getString(R.string.shared_prefs_default_location_info))
+            obj = Json.decodeFromString<MutableList<SavedLocationInfo>>(locsString!!)
+
+        Log.i("HOME DESERIALISED ", obj.toString())
+
+        var size = obj.size
+        Log.i("HOME ACTIVITY SIZE", size.toString())
+
+
+
+        if (size != 0)
         {
-            folderManager.createFolderIcon(mockLocations[i])
+            for (i in 0 until size)
+            {
+                Log.i("HOMECITY", obj[i].city)
+                if (obj[i].city != "" && obj[i].city != null)
+                    folderManager.createFolderIcon(obj[i].city)
+            }
         }
+
     }
 
     private fun startLocationUpdates() {

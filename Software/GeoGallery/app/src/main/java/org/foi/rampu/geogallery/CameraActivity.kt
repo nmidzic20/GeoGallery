@@ -1,31 +1,38 @@
 package org.foi.rampu.geogallery
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-
 import android.Manifest
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.PorterDuff
 import android.os.Build
+import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.video.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import android.widget.Toast
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.core.Preview
-import androidx.camera.core.CameraSelector
-import android.util.Log
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.video.*
 import androidx.core.content.PermissionChecker
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
+import org.foi.rampu.geogallery.classes.*
 import org.foi.rampu.geogallery.databinding.ActivityCameraBinding
 import java.text.SimpleDateFormat
-import java.util.Locale
+import java.util.*
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+
 
 class CameraActivity : AppCompatActivity() {
     private lateinit var viewBinding: ActivityCameraBinding
@@ -36,6 +43,12 @@ class CameraActivity : AppCompatActivity() {
 
     private lateinit var cameraExecutor: ExecutorService
 
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
+    private var mediaLocationManager = MediaLocationManager()
+
+
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityCameraBinding.inflate(layoutInflater)
@@ -48,14 +61,17 @@ class CameraActivity : AppCompatActivity() {
                 this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
 
-        viewBinding.ibtnPhoto.setOnClickListener { takePhoto() }
-        viewBinding.ibtnVideo.setOnClickListener { captureVideo() }
+        viewBinding.ibtnPhoto.setOnClickListener { takePhoto(this) }
+        viewBinding.ibtnVideo.setOnClickListener { captureVideo(this) }
         viewBinding.ibtnBack.setOnClickListener {
             val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
         }
 
         cameraExecutor = Executors.newSingleThreadExecutor()
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
@@ -112,9 +128,10 @@ class CameraActivity : AppCompatActivity() {
             }
 
         }, ContextCompat.getMainExecutor(this))
+
     }
 
-    private fun takePhoto() {
+    private fun takePhoto(context: Context) {
         val imageCapture = imageCapture ?: return
 
         val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
@@ -141,17 +158,21 @@ class CameraActivity : AppCompatActivity() {
                     Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
                 }
 
-                override fun
-                        onImageSaved(output: ImageCapture.OutputFileResults){
+                override fun onImageSaved(output: ImageCapture.OutputFileResults)
+                {
                     val msg = "Photo capture succeeded: ${output.savedUri}"
                     Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
+
+                    mediaLocationManager.saveLocation(output.savedUri!!, context, this@CameraActivity)
                 }
             }
         )
     }
 
-    private fun captureVideo() {
+
+
+    private fun captureVideo(context: Context) {
         val videoCapture = this.videoCapture ?: return
 
         viewBinding.ibtnVideo.isEnabled = false
@@ -203,6 +224,9 @@ class CameraActivity : AppCompatActivity() {
                             Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT)
                                 .show()
                             Log.d(TAG, msg)
+
+                            //mediaLocationManager.saveLocation(recordEvent.outputResults.outputUri, context, this@CameraActivity)
+
                         } else {
                             recording?.close()
                             recording = null
@@ -238,4 +262,7 @@ class CameraActivity : AppCompatActivity() {
             }.toTypedArray()
     }
 
+    override fun onBackPressed() {
+        return
+    }
 }
