@@ -5,6 +5,9 @@ import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.TextView
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.foi.rampu.geogallery.R
 
 object Statistics {
@@ -78,7 +81,7 @@ object Statistics {
     private fun findItemWithMax(tv : TextView, map : MutableMap<String,Int>, media : String)
     {
         try {
-            tv.text = countriesVideos.maxBy { it.value }.key
+            tv.text = map.maxBy { it.value }.key
         }
         catch (e : java.util.NoSuchElementException)
         {
@@ -156,4 +159,65 @@ object Statistics {
             Statistics.citiesPhotos[city.toString()] = 1
 
     }
+
+    fun getStatisticsFromSharedPrefs(context: Context)
+    {
+        context?.getSharedPreferences("statistics_preferences", Context.MODE_PRIVATE)?.apply {
+            val statisticsString = getString("statistics_maps", "Nema")
+            var statistics : Map<String,Map<String,Int>> = mapOf<String,Map<String,Int>>()
+            if (statisticsString != "Nema")
+                statistics = Json.decodeFromString<Map<String,Map<String,Int>>>(statisticsString!!)
+
+            if (statistics.isNotEmpty())
+            {
+                countriesPhotos = statistics.get("countriesPhotos") as MutableMap<String, Int>
+                countriesVideos = statistics.get("countriesVideos") as MutableMap<String, Int>
+                citiesPhotos = statistics.get("citiesPhotos") as MutableMap<String, Int>
+                citiesVideos = statistics.get("citiesVideos") as MutableMap<String, Int>
+                Log.i("STAT", "get shared prefs " + countriesPhotos.toString() + " " + countriesVideos.toString()
+                + " " + citiesVideos.toString() + " " + citiesPhotos.toString())
+            }
+            else Log.i("STAT", "get shared prefs :(")
+
+            val statisticsString2 = getString("statistics_numbers", "Nema")
+            var statistics2 : Map<String,Int> = mapOf<String,Int>()
+            if (statisticsString2 != "Nema")
+                statistics2 = Json.decodeFromString<Map<String,Int>>(statisticsString2!!)
+
+            if (statistics2.isNotEmpty())
+            {
+                numberPhotos = statistics2.get("numberPhotos")!!
+                numberVideos = statistics2.get("numberVideos")!!
+
+                Log.i("STAT", "get shared prefs $numberVideos $numberPhotos")
+            }
+            else Log.i("STAT", "get shared prefs2 :(")
+        }
+    }
+
+    fun saveStatisticsToSharedPrefs(context: Context)
+    {
+        context?.getSharedPreferences("statistics_preferences", Context.MODE_PRIVATE)?.apply {
+
+            val mapMaps = mapOf<String, Map<String,Int>>(
+                "countriesPhotos" to countriesPhotos,
+                "countriesVideos" to countriesVideos,
+                "citiesPhotos" to citiesPhotos,
+                "citiesVideos" to citiesVideos
+            )
+            val mapNumbers = mapOf<String, Int>(
+                "numberPhotos" to numberPhotos,
+                "numberVideos" to numberVideos
+            )
+
+            edit().putString("statistics_maps", Json.encodeToString(mapMaps)).apply()
+            edit().putString("statistics_numbers", Json.encodeToString(mapNumbers)).apply()
+
+            Log.i("STAT", "map maps " + getString("statistics_maps", "Nema" ))
+            Log.i("STAT", "map numbers " + getString("statistics_numbers", "Nema"))
+
+        }
+    }
+
+
 }

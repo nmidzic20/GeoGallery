@@ -16,35 +16,6 @@ import org.foi.rampu.geogallery.R
 
 class MediaLocationManager {
 
-    fun saveLocation(uri : Uri, context : Context, activity : Activity) {
-
-        //HomeActivity locations callback automatically updates current location and saves it to CurrentLocationInfo object
-        //here as we save the just taken picture/video, we need to access CurrentLocationInfo,
-        // save it to AllLocationsInfo object to keep track of all the locations where any media was recorded/taken,
-        //and save AllLocationsInfo to shared preferences (isolated storage) to keep it when the app is not in use,
-        //then save current location to this picture's metadata (UserInfo)
-        // so we can determine the right folder when displaying this picture
-
-        saveLocationsFromSharedPrefsToAllLocationsInfo(context, activity);
-
-        //metadata
-
-        var data = CurrentLocationInfo.locationInfo.value
-
-        Log.i("DATA", data.toString())
-
-        var dataString = Json.encodeToString(data)
-
-        var exifData = ExifInterface(activity.contentResolver.openFileDescriptor(uri, "rw", null)!!.fileDescriptor)
-        exifData.setAttribute("UserComment", dataString)
-        exifData.saveAttributes()
-
-        Log.i("EXIF", getTagString("UserComment", exifData).toString() + " " + uri.toString())
-
-
-
-    }
-
     fun saveLocationsFromSharedPrefsToAllLocationsInfo(context: Context, activity : Activity)
     {
         //since AllLocationsInfo will be lost anytime app not in use, first we must get this info from shared
@@ -93,25 +64,6 @@ class MediaLocationManager {
             allSavedLocationsString = getString("all_locations_media_taken", activity.resources.getString(R.string.shared_prefs_default_location_info))
             Log.i("SHARED_2", allSavedLocationsString.toString())
         }
-    }
-
-    private fun getTagString(tag: String, exif: ExifInterface): String?
-    {
-        return """$tag : ${exif.getAttribute(tag)}"""
-    }
-
-
-    fun getLocationMetadata(fragment : Fragment, mediaUri : Uri) : SavedLocationInfo
-    {
-        var exifData = ExifInterface(fragment!!.requireActivity().contentResolver!!
-            .openFileDescriptor(mediaUri, "rw", null)!!.fileDescriptor)
-
-        var locationMetadataString = exifData.getAttribute("UserComment")
-        Log.i("IMAGE_USER_COMMENT", locationMetadataString.toString())
-
-        var locationMetadata = Json.decodeFromString<SavedLocationInfo>(locationMetadataString!!)
-
-        return locationMetadata
     }
 
     fun getLocationFromMediaName(mediaUri : Uri, activity: Activity) : SavedLocationInfo

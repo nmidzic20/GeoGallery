@@ -174,7 +174,9 @@ class CameraActivity : AppCompatActivity() {
             }
         )
 
+        Statistics.getStatisticsFromSharedPrefs(this)
         Statistics.updateStatistics("photo")
+        Statistics.saveStatisticsToSharedPrefs(this)
 
     }
 
@@ -253,7 +255,9 @@ class CameraActivity : AppCompatActivity() {
                 }
             }
 
+        Statistics.getStatisticsFromSharedPrefs(this)
         Statistics.updateStatistics("video")
+        Statistics.saveStatisticsToSharedPrefs(this)
     }
 
     override fun onDestroy() {

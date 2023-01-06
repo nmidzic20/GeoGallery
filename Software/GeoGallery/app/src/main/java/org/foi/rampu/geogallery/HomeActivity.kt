@@ -118,6 +118,8 @@ class HomeActivity : AppCompatActivity() {
             return@setNavigationItemSelectedListener true
         }
 
+        Statistics.getStatisticsFromSharedPrefs(this)
+
         val folderManager = FolderManager(this)
 
 
