@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
@@ -69,6 +70,12 @@ class LocationTest(val activity: HomeActivity){
     fun countryName(currentLocation: Location) : String {
                         val geoCoder = Geocoder(activity, Locale.getDefault())
                         val address = geoCoder.getFromLocation(currentLocation.latitude, currentLocation.longitude, 1)
+
+                        if (address == null)
+                        {
+                            Toast.makeText(activity,"Cannot get location because the device is not connected to Internet", Toast.LENGTH_LONG)
+                            return ""
+                        }
                         country = address[0].countryName
                         Log.i("ADDRESS", (address + " " + country).toString())
                         object : Callback {}.run {
@@ -87,6 +94,12 @@ class LocationTest(val activity: HomeActivity){
     fun cityName(currentLocation: Location) : String {
                         val geoCoder = Geocoder(activity, Locale.getDefault())
                         val address = geoCoder.getFromLocation(currentLocation.latitude, currentLocation.longitude, 1)
+
+                        if (address == null)
+                        {
+                            return ""
+                        }
+
                         city = if (address[0].locality != null)
                                 address[0].locality
                             else if (address[0].subAdminArea != null)
@@ -108,6 +121,12 @@ class LocationTest(val activity: HomeActivity){
     fun streetName(currentLocation: Location) : String{
                     val geoCoder = Geocoder(activity, Locale.getDefault())
                     val address = geoCoder.getFromLocation(currentLocation.latitude, currentLocation.longitude, 1)
+
+                    if (address == null)
+                    {
+                        return ""
+                    }
+
                     street = if (address[0].thoroughfare != null)
                             address[0].thoroughfare
                         else
