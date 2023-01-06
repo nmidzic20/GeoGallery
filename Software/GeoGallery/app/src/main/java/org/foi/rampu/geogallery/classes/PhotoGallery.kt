@@ -48,7 +48,12 @@ class PhotoGallery(val galleryFragment: GalleryFragment) {
                 val imgUri = Uri.parse(contentUri.toString())
                 Log.i("URI", imgUri.toString())
 
-                var locationMetadata = mediaLocationManager.getLocationMetadata(galleryFragment, imgUri)
+                //var locationMetadata = mediaLocationManager.getLocationMetadata(galleryFragment, imgUri)
+
+                var locationMetadata = mediaLocationManager.getLocationFromMediaName(imgUri,
+                    this.galleryFragment.requireActivity()
+                )
+
 
                 //display image only if its location metadata matches folder location name
                 Log.i("IMAGE_SHOWN?", locationMetadata.toString() + " " + galleryFragment.folderName)

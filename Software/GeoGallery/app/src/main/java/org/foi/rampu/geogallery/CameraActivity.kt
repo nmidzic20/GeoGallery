@@ -134,8 +134,13 @@ class CameraActivity : AppCompatActivity() {
     private fun takePhoto(context: Context) {
         val imageCapture = imageCapture ?: return
 
-        val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
-            .format(System.currentTimeMillis())
+        mediaLocationManager.saveLocationsFromSharedPrefsToAllLocationsInfo(context,this)
+        var data = CurrentLocationInfo.locationInfo.value
+        Log.i("DATA_TAKE_PHOTO", data.toString())
+        var dataString = Json.encodeToString(data)
+        val name = dataString
+            //SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis())
+
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
             put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
@@ -164,6 +169,7 @@ class CameraActivity : AppCompatActivity() {
                     Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
 
+                    //exif variant with saving location to photo metadata
                     mediaLocationManager.saveLocation(output.savedUri!!, context, this@CameraActivity)
                 }
             }
