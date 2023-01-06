@@ -173,6 +173,9 @@ class CameraActivity : AppCompatActivity() {
                 }
             }
         )
+
+        Statistics.updateStatistics("photo")
+
     }
 
 
@@ -249,6 +252,8 @@ class CameraActivity : AppCompatActivity() {
                     }
                 }
             }
+
+        Statistics.updateStatistics("video")
     }
 
     override fun onDestroy() {

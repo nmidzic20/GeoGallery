@@ -20,6 +20,8 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import com.google.android.material.navigation.NavigationView
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.decodeFromString
 import org.foi.rampu.geogallery.classes.*
@@ -38,10 +40,19 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var currentLocation: Location
 
 
+    lateinit var navDrawerLayout: DrawerLayout
+    lateinit var navView: NavigationView
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
+
+        //navigation drawer
+        navDrawerLayout = viewBinding.drawerLayout
+        navView = viewBinding.navView
+
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this) //Inicijalizacija providera za lokaciju
 
@@ -96,11 +107,18 @@ class HomeActivity : AppCompatActivity() {
 
         }
 
+
+        //navigation drawer
+        navView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.title) {
+                "Statistics" -> Statistics.showDialog(this)
+            //Toast.makeText(this, "Prozor", Toast.LENGTH_SHORT).show()
+            }
+            navDrawerLayout.closeDrawers()
+            return@setNavigationItemSelectedListener true
+        }
+
         val folderManager = FolderManager(this)
-
-        val mockLocations = listOf<String>("Zagreb", "Varaždin", "Rijeka", "Graz", "Rome", "Dubrovnik",
-            "Trieste", "Venice", "Osijek", "Pula")
-
 
 
         val prefs = getSharedPreferences("locations_preferences", Context.MODE_PRIVATE)
@@ -121,19 +139,6 @@ class HomeActivity : AppCompatActivity() {
         var size = AllLocationsInfo.savedLocationInfo.size
         Log.i("HOME ACTIVITY SIZE", size.toString())
 
-        /*var ivCityFolder : ImageView? = null
-
-        if (size != 0)
-        {
-            for(location in locations)
-            {
-                Log.i("HOMECITY", location.city)
-                if (location.city != "" && location.city != null)
-                    ivCityFolder = folderManager.createFolderIcon(location.city, LocationCategory.CITY, null)
-                if (location.country != "" && location.country != null)
-                    folderManager.createFolderIcon(location.country, LocationCategory.COUNTRY, ivCityFolder)
-            }
-        }*/
         if (size != 0)
         {
             folderManager.createFolderIconsCountries()
