@@ -24,7 +24,7 @@ class MediaLocationManager {
         // so we can determine the right folder when displaying this picture
 
         //since AllLocationsInfo will be lost anytime app not in use, first we must get this info from shared
-        //preferenced to AllLocationsInfo, then add new location to AllLocationsInfo, and then it will be copied back
+        //preferences to AllLocationsInfo, then add new location to AllLocationsInfo, and then it will be copied back
         //to shared preferences
 
         var allSavedLocationsString : String? = null
@@ -83,6 +83,10 @@ class MediaLocationManager {
         exifData.saveAttributes()
 
         Log.i("EXIF", getTagString("UserComment", exifData).toString() + " " + uri.toString())
+
+
+        //store location info in media name itself
+
 
     }
 

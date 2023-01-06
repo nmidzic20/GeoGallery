@@ -7,23 +7,18 @@ import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import androidx.lifecycle.MutableLiveData
 import android.content.Context
-import android.provider.ContactsContract
 import android.util.Log
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.location.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import org.foi.rampu.geogallery.databinding.ActivityHomeBinding
 import android.os.ResultReceiver
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.decodeFromString
 import org.foi.rampu.geogallery.classes.*
@@ -113,24 +108,24 @@ class HomeActivity : AppCompatActivity() {
         var locsString = prefs.getString("all_locations_media_taken", resources.getString(R.string.shared_prefs_default_location_info))
         Log.i("HOME ACTIVITY ", locsString.toString())
 
-        var obj = mutableListOf<SavedLocationInfo>()
+        var locations = mutableSetOf<SavedLocationInfo>()
         if (locsString != resources.getString(R.string.shared_prefs_default_location_info))
-            obj = Json.decodeFromString<MutableList<SavedLocationInfo>>(locsString!!)
+            locations = Json.decodeFromString<MutableSet<SavedLocationInfo>>(locsString!!)
 
-        Log.i("HOME DESERIALISED ", obj.toString())
+        Log.i("HOME DESERIALISED ", locations.toString())
 
-        var size = obj.size
+        var size = locations.size
         Log.i("HOME ACTIVITY SIZE", size.toString())
 
 
 
         if (size != 0)
         {
-            for (i in 0 until size)
+            for(location in locations)
             {
-                Log.i("HOMECITY", obj[i].city)
-                if (obj[i].city != "" && obj[i].city != null)
-                    folderManager.createFolderIcon(obj[i].city)
+                Log.i("HOMECITY", location.city)
+                if (location.city != "" && location.city != null)
+                    folderManager.createFolderIcon(location.city)
             }
         }
 
