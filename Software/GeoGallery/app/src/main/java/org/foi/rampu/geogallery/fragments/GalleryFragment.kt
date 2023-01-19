@@ -2,15 +2,13 @@ package org.foi.rampu.geogallery.fragments
 
 import android.os.Build
 import android.os.Bundle
-import android.provider.ContactsContract.Contacts.Photo
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.GridLayout
 import androidx.annotation.RequiresApi
 import org.foi.rampu.geogallery.R
+import org.foi.rampu.geogallery.classes.AudioGallery
 import org.foi.rampu.geogallery.classes.PhotoGallery
 import org.foi.rampu.geogallery.classes.VideoGallery
 
@@ -33,9 +31,10 @@ class GalleryFragment : Fragment() {
 
         val photoGallery = PhotoGallery(this)
         val videoGallery = VideoGallery(this)
+        val audioGallery = AudioGallery(this)
 
         photoGallery?.display_photos()
         videoGallery?.display_videos()
-
+        audioGallery?.displayAudio()
     }
 }
