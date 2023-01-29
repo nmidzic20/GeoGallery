@@ -10,6 +10,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.util.Size
 import android.view.Gravity
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -138,10 +139,31 @@ class VideoGallery(val galleryFragment: GalleryFragment, private var context: Co
         }
 
         ivThumbnail.setOnLongClickListener {
-            Toast.makeText(context, "Long click detected", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(context, "Long click detected", Toast.LENGTH_SHORT).show()
+            showPopup(ivThumbnail)
             true
         }
 
+    }
+
+    private fun showPopup(view: View) {
+        val popup = PopupMenu(context, view)
+        popup.inflate(R.menu.popup_menu)
+
+        popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item: MenuItem? ->
+            when (item!!.itemId) {
+                R.id.share -> {
+                    Toast.makeText(context, item.title, Toast.LENGTH_SHORT).show()
+                }
+                R.id.delete -> {
+                    Toast.makeText(context, item.title, Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            true
+        })
+
+        popup.show()
     }
 
     private fun setVideoMargins(frameLayout : FrameLayout)
