@@ -4,7 +4,6 @@ import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
@@ -16,14 +15,13 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.core.view.isInvisible
-import org.foi.rampu.geogallery.GalleryActivity
 import org.foi.rampu.geogallery.R
 import org.foi.rampu.geogallery.fragments.GalleryFragment
 
 class VideoGallery(val galleryFragment: GalleryFragment, private var context: Context) {
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    fun display_videos()
+    fun displayVideos()
     {
         val projection = arrayOf(MediaStore.Video.Media._ID)
         val selection : String? = null
@@ -73,7 +71,7 @@ class VideoGallery(val galleryFragment: GalleryFragment, private var context: Co
 
     }
 
-    fun createVideoView(videoUri : Uri, thumbnail : Bitmap)
+    private fun createVideoView(videoUri : Uri, thumbnail : Bitmap)
     {
         val layout = galleryFragment.view?.findViewById<View>(org.foi.rampu.geogallery.R.id.gridLayout) as ViewGroup
         val videoView = VideoView(galleryFragment.activity)
@@ -98,7 +96,7 @@ class VideoGallery(val galleryFragment: GalleryFragment, private var context: Co
 
     }
 
-    fun createThumbnail(thumbnail: Bitmap, videoView: VideoView, layout: ViewGroup, videoUri: Uri)
+    private fun createThumbnail(thumbnail: Bitmap, videoView: VideoView, layout: ViewGroup, videoUri: Uri)
     {
         val frameLayout = galleryFragment.context?.let { FrameLayout(it) }
         frameLayout?.layoutParams =
@@ -125,7 +123,7 @@ class VideoGallery(val galleryFragment: GalleryFragment, private var context: Co
 
     }
 
-    fun setPlayOrPauseLogic(playIcon : ImageView, ivThumbnail : ImageView, videoView : VideoView, videoUri : Uri)
+    private fun setPlayOrPauseLogic(playIcon : ImageView, ivThumbnail : ImageView, videoView : VideoView, videoUri : Uri)
     {
         ivThumbnail.setOnClickListener {
 
@@ -146,14 +144,14 @@ class VideoGallery(val galleryFragment: GalleryFragment, private var context: Co
 
     }
 
-    fun setVideoMargins(frameLayout : FrameLayout)
+    private fun setVideoMargins(frameLayout : FrameLayout)
     {
         val param = frameLayout.layoutParams as ViewGroup.MarginLayoutParams
         param.setMargins(20,20,20,20)
         frameLayout.layoutParams = param
     }
 
-    fun createThumbnailImageView(thumbnail : Bitmap) : ImageView
+    private fun createThumbnailImageView(thumbnail : Bitmap) : ImageView
     {
         val ivThumbnail = ImageView(galleryFragment.activity)
         ivThumbnail.layoutParams = createLayoutParams()
@@ -164,7 +162,7 @@ class VideoGallery(val galleryFragment: GalleryFragment, private var context: Co
         return ivThumbnail
     }
 
-    fun createPlayIconImageView() : ImageView
+    private fun createPlayIconImageView() : ImageView
     {
         val playIcon = ImageView(galleryFragment.activity)
         playIcon.layoutParams = createLayoutParams()
@@ -176,7 +174,7 @@ class VideoGallery(val galleryFragment: GalleryFragment, private var context: Co
         return playIcon
     }
 
-    fun createPlayIconWhiteBackground() : ImageView
+    private fun createPlayIconWhiteBackground() : ImageView
     {
         val playIconWhiteBackground = ImageView(galleryFragment.activity)
         playIconWhiteBackground.layoutParams = createLayoutParams()
@@ -184,7 +182,7 @@ class VideoGallery(val galleryFragment: GalleryFragment, private var context: Co
         return playIconWhiteBackground
     }
 
-    fun createLayoutParams() : ViewGroup.LayoutParams
+    private fun createLayoutParams() : ViewGroup.LayoutParams
     {
         return ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -192,7 +190,7 @@ class VideoGallery(val galleryFragment: GalleryFragment, private var context: Co
         )
     }
 
-    fun centerPlayIcon(frameLayout: FrameLayout, playIcon: ImageView, playIconWhiteBackground : ImageView)
+    private fun centerPlayIcon(frameLayout: FrameLayout, playIcon: ImageView, playIconWhiteBackground : ImageView)
     {
         val param = frameLayout.layoutParams as FrameLayout.LayoutParams
         param.gravity = Gravity.CENTER

@@ -3,26 +3,22 @@ package org.foi.rampu.geogallery.classes
 import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
-import android.media.ExifInterface
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat.startActivity
-import androidx.fragment.app.FragmentActivity
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import org.foi.rampu.geogallery.GalleryActivity
+import org.foi.rampu.geogallery.R
 import org.foi.rampu.geogallery.fragments.GalleryFragment
 
 
 class PhotoGallery(val galleryFragment: GalleryFragment, private var context: Context) {
 
-    fun display_photos()
+    fun displayPhotos()
     {
         val projection = arrayOf(MediaStore.Images.Media._ID)
         val selection : String? = null
@@ -71,7 +67,7 @@ class PhotoGallery(val galleryFragment: GalleryFragment, private var context: Co
         }
     }
 
-    fun createImageView(imgUri : Uri)
+    private fun createImageView(imgUri : Uri)
     {
 
         val layout = galleryFragment.view?.findViewById<View>(org.foi.rampu.geogallery.R.id.gridLayout) as ViewGroup
@@ -103,7 +99,8 @@ class PhotoGallery(val galleryFragment: GalleryFragment, private var context: Co
         }
 
         imageView.setOnLongClickListener {
-            Toast.makeText(context, "Long click detected", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(context, "Long click detected", Toast.LENGTH_SHORT).show()
+            showPopup(imageView)
             true
         }
 
@@ -111,10 +108,29 @@ class PhotoGallery(val galleryFragment: GalleryFragment, private var context: Co
         Log.i("imgview", imageView.toString())
 
         setImageMargins(imageView)
-
     }
 
-    fun setImageMargins(imageView : ImageView)
+    private fun showPopup(view: View) {
+        val popup = PopupMenu(context, view)
+        popup.inflate(R.menu.popup_menu)
+
+        popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item: MenuItem? ->
+            when (item!!.itemId) {
+                R.id.share -> {
+                    Toast.makeText(context, item.title, Toast.LENGTH_SHORT).show()
+                }
+                R.id.delete -> {
+                    Toast.makeText(context, item.title, Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            true
+        })
+
+        popup.show()
+    }
+
+    private fun setImageMargins(imageView : ImageView)
     {
         val param = imageView.layoutParams as ViewGroup.MarginLayoutParams
         param.setMargins(20,20,20,20)
