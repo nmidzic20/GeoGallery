@@ -27,6 +27,10 @@ class FolderManager(val activity: HomeActivity) {
     fun createFolderIconsCountries()
     {
         activity.viewBinding.ibtnFolderBack.visibility = View.GONE
+        activity.viewBinding.ibtnAudio.visibility = View.VISIBLE
+        activity.viewBinding.ibtnCamera.visibility = View.VISIBLE
+        activity.viewBinding.ibtnLocation.visibility = View.VISIBLE
+        activity.viewBinding.ibtnGoogleMaps.visibility = View.VISIBLE
 
         //prevent country folder duplication for e.g. items like {Croatia, Osijek, ...} and {Croatia, Zagreb, ...}
         //which are distinct items in MutableSet, but would create two folders Croatia since here we care only
@@ -50,6 +54,11 @@ class FolderManager(val activity: HomeActivity) {
     fun createFolderIconCities(country : String)
     {
         activity.viewBinding.ibtnFolderBack.visibility = View.VISIBLE
+        activity.viewBinding.ibtnAudio.visibility = View.GONE
+        activity.viewBinding.ibtnCamera.visibility = View.GONE
+        activity.viewBinding.ibtnLocation.visibility = View.GONE
+        activity.viewBinding.ibtnGoogleMaps.visibility = View.GONE
+
         activity.viewBinding.ibtnFolderBack.setOnClickListener {
 
             //pobrisat foldere imena gradova
