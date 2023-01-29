@@ -8,10 +8,11 @@
 
     <ImageButton
         android:id="@+id/ibtnRecord"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
         android:cropToPadding="false"
         android:scaleType="fitCenter"
+        android:background="@color/purple_200"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
