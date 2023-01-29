@@ -31,8 +31,8 @@ class GalleryFragment : Fragment() {
 
         folderName = activity?.intent?.getStringExtra("FOLDER_NAME")?.split("_")?.get(0)
 
-        val photoGallery = PhotoGallery(this)
-        val videoGallery = VideoGallery(this)
+        val photoGallery = PhotoGallery(this, requireContext())
+        val videoGallery = VideoGallery(this, requireContext())
 
         photoGallery?.display_photos()
         videoGallery?.display_videos()

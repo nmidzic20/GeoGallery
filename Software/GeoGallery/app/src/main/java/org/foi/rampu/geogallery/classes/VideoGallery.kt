@@ -1,6 +1,7 @@
 package org.foi.rampu.geogallery.classes
 
 import android.content.ContentUris
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.PorterDuff
@@ -12,17 +13,14 @@ import android.util.Size
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.MediaController
-import android.widget.VideoView
+import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.core.view.isInvisible
 import org.foi.rampu.geogallery.GalleryActivity
 import org.foi.rampu.geogallery.R
 import org.foi.rampu.geogallery.fragments.GalleryFragment
 
-class VideoGallery(val galleryFragment: GalleryFragment) {
+class VideoGallery(val galleryFragment: GalleryFragment, private var context: Context) {
 
     @RequiresApi(Build.VERSION_CODES.Q)
     fun display_videos()
@@ -139,6 +137,11 @@ class VideoGallery(val galleryFragment: GalleryFragment) {
                 )
             )
             videoView.start()
+        }
+
+        ivThumbnail.setOnLongClickListener {
+            Toast.makeText(context, "Long click detected", Toast.LENGTH_SHORT).show()
+            true
         }
 
     }

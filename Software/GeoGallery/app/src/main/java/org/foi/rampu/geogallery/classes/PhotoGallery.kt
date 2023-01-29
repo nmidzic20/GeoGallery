@@ -1,6 +1,7 @@
 package org.foi.rampu.geogallery.classes
 
 import android.content.ContentUris
+import android.content.Context
 import android.content.Intent
 import android.media.ExifInterface
 import android.net.Uri
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.FragmentActivity
 import kotlinx.serialization.decodeFromString
@@ -18,7 +20,7 @@ import org.foi.rampu.geogallery.GalleryActivity
 import org.foi.rampu.geogallery.fragments.GalleryFragment
 
 
-class PhotoGallery(val galleryFragment: GalleryFragment) {
+class PhotoGallery(val galleryFragment: GalleryFragment, private var context: Context) {
 
     fun display_photos()
     {
@@ -98,6 +100,11 @@ class PhotoGallery(val galleryFragment: GalleryFragment) {
                     imgUri
                 )
             )
+        }
+
+        imageView.setOnLongClickListener {
+            Toast.makeText(context, "Long click detected", Toast.LENGTH_SHORT).show()
+            true
         }
 
         layout.addView(imageView)
