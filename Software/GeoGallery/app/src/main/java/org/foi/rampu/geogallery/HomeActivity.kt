@@ -18,6 +18,7 @@ import org.foi.rampu.geogallery.databinding.ActivityHomeBinding
 import android.os.ResultReceiver
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.ActionBar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -49,6 +50,9 @@ class HomeActivity : AppCompatActivity() {
         viewBinding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
 
+        supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
+        supportActionBar?.setCustomView(R.layout.title_bar_layout)
+
         //navigation drawer
         navDrawerLayout = viewBinding.drawerLayout
         navView = viewBinding.navView
@@ -67,7 +71,7 @@ class HomeActivity : AppCompatActivity() {
                 val city = location.cityName(currentLocation)
                 val street = location.streetName(currentLocation)
 
-                viewBinding.tvLocation.text = country+ "," + city+ "," + street
+                viewBinding.tvLocation.text = "$country, $city, $street"
             }
         }
 
