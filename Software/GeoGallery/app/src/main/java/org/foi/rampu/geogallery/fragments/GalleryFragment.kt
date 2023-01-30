@@ -8,14 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import org.foi.rampu.geogallery.R
-import org.foi.rampu.geogallery.classes.AudioGallery
 import org.foi.rampu.geogallery.classes.PhotoGallery
 import org.foi.rampu.geogallery.classes.VideoGallery
 
 class GalleryFragment : Fragment() {
 
     var folderName : String? = null
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -24,17 +22,16 @@ class GalleryFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_gallery, container, false)
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         folderName = activity?.intent?.getStringExtra("FOLDER_NAME")?.split("_")?.get(0)
 
-        val photoGallery = PhotoGallery(this)
-        val videoGallery = VideoGallery(this)
-        val audioGallery = AudioGallery(this)
+        val photoGallery = PhotoGallery(this, requireContext())
+        val videoGallery = VideoGallery(this, requireContext())
 
-        photoGallery?.display_photos()
-        videoGallery?.display_videos()
-        audioGallery?.displayAudio()
+        photoGallery.displayPhotos()
+        videoGallery.displayVideos()
+
     }
 }

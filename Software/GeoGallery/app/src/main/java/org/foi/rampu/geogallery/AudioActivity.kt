@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.ContentValues
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.graphics.PorterDuff
 import android.media.MediaRecorder
 import android.net.Uri
@@ -13,6 +14,7 @@ import android.provider.MediaStore
 import android.provider.MediaStore.Audio
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -34,9 +36,13 @@ class AudioActivity : AppCompatActivity() {
     private var mediaLocationManager = MediaLocationManager()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         viewBinding = ActivityAudioBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
+
+        supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
+        supportActionBar?.setCustomView(R.layout.title_bar_layout)
 
         viewBinding.ibtnRecord.setOnClickListener {
             if (!allPermissionsGranted()) {
@@ -93,7 +99,7 @@ class AudioActivity : AppCompatActivity() {
         }
 
         viewBinding.ibtnRecord.setColorFilter(
-            R.color.red,
+            Color.RED,
             PorterDuff.Mode.SRC_ATOP
         )
     }
@@ -107,7 +113,7 @@ class AudioActivity : AppCompatActivity() {
         audioCapture = null
 
         viewBinding.ibtnRecord.setColorFilter(
-            R.color.black,
+            Color.BLACK,
             PorterDuff.Mode.SRC_ATOP
         )
         Toast.makeText(baseContext, "Added recording", Toast.LENGTH_SHORT).show()

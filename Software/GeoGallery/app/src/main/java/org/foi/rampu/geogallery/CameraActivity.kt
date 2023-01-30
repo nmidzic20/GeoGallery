@@ -12,6 +12,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
@@ -40,6 +41,7 @@ class CameraActivity : AppCompatActivity() {
     private var imageCapture: ImageCapture? = null
     private var videoCapture: VideoCapture<Recorder>? = null
     private var recording: Recording? = null
+    private var camera: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
     private lateinit var cameraExecutor: ExecutorService
 
@@ -50,12 +52,16 @@ class CameraActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         viewBinding = ActivityCameraBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
 
+        supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
+        supportActionBar?.setCustomView(R.layout.title_bar_layout)
+
         if (allPermissionsGranted()) {
-            startCamera()
+            startCamera(camera)
         } else {
             ActivityCompat.requestPermissions(
                 this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
@@ -63,6 +69,7 @@ class CameraActivity : AppCompatActivity() {
 
         viewBinding.ibtnPhoto.setOnClickListener { takePhoto(this) }
         viewBinding.ibtnVideo.setOnClickListener { captureVideo(this) }
+        viewBinding.ibtnSwitch.setOnClickListener { switchCamera() }
         viewBinding.ibtnBack.setOnClickListener {
             val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
@@ -72,6 +79,15 @@ class CameraActivity : AppCompatActivity() {
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
+    }
+
+    private fun switchCamera() {
+        if (camera == CameraSelector.DEFAULT_BACK_CAMERA) {
+            camera = CameraSelector.DEFAULT_FRONT_CAMERA
+        } else {
+            camera = CameraSelector.DEFAULT_BACK_CAMERA
+        }
+        startCamera(camera)
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
@@ -85,7 +101,7 @@ class CameraActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
-                startCamera()
+                startCamera(camera)
             } else {
                 Toast.makeText(this,
                     "Permissions not granted by the user.",
@@ -95,7 +111,7 @@ class CameraActivity : AppCompatActivity() {
         }
     }
 
-    private fun startCamera() {
+    private fun startCamera(cameraSelector: CameraSelector) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
         cameraProviderFuture.addListener({
@@ -113,9 +129,6 @@ class CameraActivity : AppCompatActivity() {
                 .setQualitySelector(QualitySelector.from(Quality.HIGHEST))
                 .build()
             videoCapture = VideoCapture.withOutput(recorder)
-
-
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
             try {
                 cameraProvider.unbindAll()

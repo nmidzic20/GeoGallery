@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import android.widget.*
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.viewpager2.widget.ViewPager2
@@ -32,9 +33,13 @@ class GalleryActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         viewBinding = ActivityGalleryBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
+
+        supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
+        supportActionBar?.setCustomView(R.layout.title_bar_layout)
 
         //navigation drawer
         navDrawerLayout = viewBinding.drawerLayout

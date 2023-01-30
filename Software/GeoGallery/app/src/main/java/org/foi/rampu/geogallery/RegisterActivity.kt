@@ -22,6 +22,8 @@ class RegisterActivity : AppCompatActivity() {
         viewBinding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
 
+        supportActionBar?.hide()
+
         firebaseAuth = Firebase.auth    //Inicijaliacija Firebase-a
 
         viewBinding.tvHasAccount.setOnClickListener { //Na klik naziva imate račun
