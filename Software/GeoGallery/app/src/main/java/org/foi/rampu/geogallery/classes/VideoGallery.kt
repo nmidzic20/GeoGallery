@@ -1,5 +1,6 @@
 package org.foi.rampu.geogallery.classes
 
+import android.app.Activity
 import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
@@ -19,16 +20,16 @@ import androidx.core.view.isInvisible
 import org.foi.rampu.geogallery.R
 import org.foi.rampu.geogallery.fragments.GalleryFragment
 
-class VideoGallery(val galleryFragment: GalleryFragment, private var context: Context) {
+class VideoGallery(private val galleryFragment: GalleryFragment, private var context: Context) {
 
-    @RequiresApi(Build.VERSION_CODES.Q)
+    @RequiresApi(Build.VERSION_CODES.R)
     fun displayVideos()
     {
         val projection = arrayOf(MediaStore.Video.Media._ID)
         val selection : String? = null
         val selectionArgs = arrayOf<String>()
         val sortOrder : String? = null
-        var mediaLocationManager : MediaLocationManager = MediaLocationManager()
+        val mediaLocationManager = MediaLocationManager()
 
         galleryFragment.activity?.applicationContext?.contentResolver?.query(
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
@@ -40,7 +41,7 @@ class VideoGallery(val galleryFragment: GalleryFragment, private var context: Co
             while (cursor.moveToNext()) {
                 val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID)
                 val id = cursor.getLong(idColumn)
-                var contentUri: Uri = ContentUris.withAppendedId(
+                val contentUri: Uri = ContentUris.withAppendedId(
                     MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
                     id
                 )
@@ -49,7 +50,7 @@ class VideoGallery(val galleryFragment: GalleryFragment, private var context: Co
                 Log.i("URI", videoUri.toString())
 
 
-                var locationMetadata = mediaLocationManager.getLocationFromMediaName(videoUri,
+                val locationMetadata = mediaLocationManager.getLocationFromMediaName(videoUri,
                     this.galleryFragment.requireActivity()
                 )
 
@@ -72,9 +73,10 @@ class VideoGallery(val galleryFragment: GalleryFragment, private var context: Co
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     private fun createVideoView(videoUri : Uri, thumbnail : Bitmap)
     {
-        val layout = galleryFragment.view?.findViewById<View>(org.foi.rampu.geogallery.R.id.gridLayout) as ViewGroup
+        val layout = galleryFragment.view?.findViewById<View>(R.id.gridLayout) as ViewGroup
         val videoView = VideoView(galleryFragment.activity)
         videoView.layoutParams = createLayoutParams()
 
@@ -97,6 +99,7 @@ class VideoGallery(val galleryFragment: GalleryFragment, private var context: Co
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     private fun createThumbnail(thumbnail: Bitmap, videoView: VideoView, layout: ViewGroup, videoUri: Uri)
     {
         val frameLayout = galleryFragment.context?.let { FrameLayout(it) }
@@ -120,11 +123,12 @@ class VideoGallery(val galleryFragment: GalleryFragment, private var context: Co
 
         setVideoMargins(frameLayout)
 
-        setPlayOrPauseLogic(playIcon, ivThumbnail, videoView, videoUri)
+        setPlayOrPauseLogic(ivThumbnail, videoView, videoUri)
 
     }
 
-    private fun setPlayOrPauseLogic(playIcon : ImageView, ivThumbnail : ImageView, videoView : VideoView, videoUri : Uri)
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun setPlayOrPauseLogic(ivThumbnail: ImageView, videoView: VideoView, videoUri: Uri)
     {
         ivThumbnail.setOnClickListener {
 
@@ -139,31 +143,48 @@ class VideoGallery(val galleryFragment: GalleryFragment, private var context: Co
         }
 
         ivThumbnail.setOnLongClickListener {
-            //Toast.makeText(context, "Long click detected", Toast.LENGTH_SHORT).show()
-            showPopup(ivThumbnail)
+            showPopup(ivThumbnail, videoUri)
             true
         }
 
     }
 
-    private fun showPopup(view: View) {
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun showPopup(view: View, videoUri: Uri) {
+
+        val uriList = mutableListOf(videoUri)
         val popup = PopupMenu(context, view)
         popup.inflate(R.menu.popup_menu)
 
-        popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item: MenuItem? ->
+        popup.setOnMenuItemClickListener { item: MenuItem? ->
             when (item!!.itemId) {
                 R.id.share -> {
                     Toast.makeText(context, item.title, Toast.LENGTH_SHORT).show()
                 }
                 R.id.delete -> {
-                    Toast.makeText(context, item.title, Toast.LENGTH_SHORT).show()
+                    deleteVideo(uriList)
+                    //Toast.makeText(context, item.title, Toast.LENGTH_SHORT).show()
                 }
             }
 
             true
-        })
+        }
 
         popup.show()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun deleteVideo(uriList: List<Uri>) {
+
+        val activity = context as Activity
+        val req = MediaStore.createDeleteRequest(context.contentResolver, uriList)
+
+        activity.startIntentSenderForResult(req.intentSender, 123,
+            null, 0, 0, 0, null
+        )
+
+        //activity.finish()
+        //activity.startActivity(activity.intent)
     }
 
     private fun setVideoMargins(frameLayout : FrameLayout)

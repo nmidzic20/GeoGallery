@@ -1,9 +1,11 @@
 package org.foi.rampu.geogallery.classes
 
+import android.app.Activity
 import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
 import android.view.MenuItem
@@ -12,19 +14,21 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import org.foi.rampu.geogallery.R
 import org.foi.rampu.geogallery.fragments.GalleryFragment
 
 
-class PhotoGallery(val galleryFragment: GalleryFragment, private var context: Context) {
+class PhotoGallery(private val galleryFragment: GalleryFragment, private var context: Context) {
 
+    @RequiresApi(Build.VERSION_CODES.R)
     fun displayPhotos()
     {
         val projection = arrayOf(MediaStore.Images.Media._ID)
         val selection : String? = null
         val selectionArgs = arrayOf<String>()
         val sortOrder : String? = null
-        var mediaLocationManager : MediaLocationManager = MediaLocationManager()
+        val mediaLocationManager = MediaLocationManager()
 
         //fetch all images from MediaStore
         galleryFragment.activity?.applicationContext?.contentResolver?.query(
@@ -38,7 +42,7 @@ class PhotoGallery(val galleryFragment: GalleryFragment, private var context: Co
 
                 val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
                 val id = cursor.getLong(idColumn)
-                var contentUri: Uri = ContentUris.withAppendedId(
+                val contentUri: Uri = ContentUris.withAppendedId(
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                     id
                 )
@@ -48,7 +52,7 @@ class PhotoGallery(val galleryFragment: GalleryFragment, private var context: Co
 
                 //var locationMetadata = mediaLocationManager.getLocationMetadata(galleryFragment, imgUri)
 
-                var locationMetadata = mediaLocationManager.getLocationFromMediaName(imgUri,
+                val locationMetadata = mediaLocationManager.getLocationFromMediaName(imgUri,
                     this.galleryFragment.requireActivity()
                 )
 
@@ -67,10 +71,11 @@ class PhotoGallery(val galleryFragment: GalleryFragment, private var context: Co
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     private fun createImageView(imgUri : Uri)
     {
 
-        val layout = galleryFragment.view?.findViewById<View>(org.foi.rampu.geogallery.R.id.gridLayout) as ViewGroup
+        val layout = galleryFragment.view?.findViewById<View>(R.id.gridLayout) as ViewGroup
             //line below only for activities, if using findViewById for fragments, need to get it from view/getView() first!
             //activity.findViewById<View>(org.foi.rampu.geogallery.R.id.gridLayout) as ViewGroup
 
@@ -100,34 +105,51 @@ class PhotoGallery(val galleryFragment: GalleryFragment, private var context: Co
 
         imageView.setOnLongClickListener {
             //Toast.makeText(context, "Long click detected", Toast.LENGTH_SHORT).show()
-            showPopup(imageView)
+            showPopup(imageView, imgUri)
             true
         }
 
         layout.addView(imageView)
-        Log.i("imgview", imageView.toString())
 
         setImageMargins(imageView)
     }
 
-    private fun showPopup(view: View) {
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun showPopup(view: View, imgUri: Uri) {
+
+        val uriList = mutableListOf(imgUri)
         val popup = PopupMenu(context, view)
         popup.inflate(R.menu.popup_menu)
 
-        popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item: MenuItem? ->
+        popup.setOnMenuItemClickListener { item: MenuItem? ->
             when (item!!.itemId) {
                 R.id.share -> {
                     Toast.makeText(context, item.title, Toast.LENGTH_SHORT).show()
                 }
                 R.id.delete -> {
-                    Toast.makeText(context, item.title, Toast.LENGTH_SHORT).show()
+                    deletePhoto(uriList)
+                    // Toast.makeText(context, item.title, Toast.LENGTH_SHORT).show()
                 }
             }
 
             true
-        })
+        }
 
         popup.show()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun deletePhoto(uriList: List<Uri>) {
+
+        val activity = context as Activity
+        val req = MediaStore.createDeleteRequest(context.contentResolver, uriList)
+
+        activity.startIntentSenderForResult(req.intentSender, 123,
+            null, 0, 0, 0, null
+        )
+
+        //activity.finish()
+        //activity.startActivity(activity.intent)
     }
 
     private fun setImageMargins(imageView : ImageView)
