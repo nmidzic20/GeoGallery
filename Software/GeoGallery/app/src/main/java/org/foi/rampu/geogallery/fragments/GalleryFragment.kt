@@ -15,7 +15,6 @@ class GalleryFragment : Fragment() {
 
     var folderName : String? = null
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -23,7 +22,7 @@ class GalleryFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_gallery, container, false)
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         folderName = activity?.intent?.getStringExtra("FOLDER_NAME")?.split("_")?.get(0)
@@ -31,8 +30,8 @@ class GalleryFragment : Fragment() {
         val photoGallery = PhotoGallery(this, requireContext())
         val videoGallery = VideoGallery(this, requireContext())
 
-        photoGallery?.displayPhotos()
-        videoGallery?.displayVideos()
+        photoGallery.displayPhotos()
+        videoGallery.displayVideos()
 
     }
 }
