@@ -20,14 +20,14 @@ class AudioGallery(private val galleryFragment: GalleryFragment) {
         val selection : String? = null
         val selectionArgs = arrayOf<String>()
         val sortOrder : String? = null
-        val mediaLocationManager: MediaLocationManager = MediaLocationManager()
+        val mediaLocationManager = MediaLocationManager()
 
         //fetch all audio files from MediaStore
         galleryFragment.activity?.applicationContext?.contentResolver?.query(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
             projection,
             selection,
-            selectionArgs,
+            null,
             sortOrder
         )?.use { cursor ->
             while (cursor.moveToNext()) {

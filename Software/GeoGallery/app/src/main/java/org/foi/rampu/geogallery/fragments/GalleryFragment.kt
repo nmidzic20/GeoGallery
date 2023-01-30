@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import org.foi.rampu.geogallery.R
+import org.foi.rampu.geogallery.classes.AudioGallery
 import org.foi.rampu.geogallery.classes.PhotoGallery
 import org.foi.rampu.geogallery.classes.VideoGallery
 
@@ -29,9 +30,10 @@ class GalleryFragment : Fragment() {
 
         val photoGallery = PhotoGallery(this, requireContext())
         val videoGallery = VideoGallery(this, requireContext())
+        val audioGallery = AudioGallery(this)
 
         photoGallery.displayPhotos()
         videoGallery.displayVideos()
-
+        audioGallery.displayAudio()
     }
 }

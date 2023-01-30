@@ -77,7 +77,7 @@ class AudioActivity : AppCompatActivity() {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
             put(MediaStore.MediaColumns.MIME_TYPE, "audio/mpeg")
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-                put(Audio.Media.RELATIVE_PATH, "Recordings/GeoGallery")
+                put(Audio.Media.RELATIVE_PATH, "Music")
             }
         }
         val audioUri: Uri? =
