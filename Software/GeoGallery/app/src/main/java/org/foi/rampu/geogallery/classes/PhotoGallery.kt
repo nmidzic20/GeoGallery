@@ -15,6 +15,7 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat.startActivity
 import org.foi.rampu.geogallery.R
 import org.foi.rampu.geogallery.fragments.GalleryFragment
 
@@ -124,7 +125,8 @@ class PhotoGallery(private val galleryFragment: GalleryFragment, private var con
         popup.setOnMenuItemClickListener { item: MenuItem? ->
             when (item!!.itemId) {
                 R.id.share -> {
-                    Toast.makeText(context, item.title, Toast.LENGTH_SHORT).show()
+                    sharePhoto(imgUri)
+                    //Toast.makeText(context, item.title, Toast.LENGTH_SHORT).show()
                 }
                 R.id.delete -> {
                     deletePhoto(uriList)
@@ -150,6 +152,19 @@ class PhotoGallery(private val galleryFragment: GalleryFragment, private var con
 
         //activity.finish()
         //activity.startActivity(activity.intent)
+    }
+
+    private fun sharePhoto(uri: Uri) {
+
+        val shareIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_STREAM, uri)
+            type = "image/jpeg"
+            putExtra(Intent.EXTRA_TEXT, "Slikano u GeoGalleryju!")
+            type = "text/plain"
+        }
+
+        (context as Activity).startActivity(Intent.createChooser(shareIntent, null))
     }
 
     private fun setImageMargins(imageView : ImageView)

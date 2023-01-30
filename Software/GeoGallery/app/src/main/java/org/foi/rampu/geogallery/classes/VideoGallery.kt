@@ -159,7 +159,8 @@ class VideoGallery(private val galleryFragment: GalleryFragment, private var con
         popup.setOnMenuItemClickListener { item: MenuItem? ->
             when (item!!.itemId) {
                 R.id.share -> {
-                    Toast.makeText(context, item.title, Toast.LENGTH_SHORT).show()
+                    shareVideo(videoUri)
+                    //Toast.makeText(context, item.title, Toast.LENGTH_SHORT).show()
                 }
                 R.id.delete -> {
                     deleteVideo(uriList)
@@ -187,6 +188,19 @@ class VideoGallery(private val galleryFragment: GalleryFragment, private var con
         //activity.startActivity(activity.intent)
     }
 
+    private fun shareVideo(uri: Uri) {
+
+        val shareIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_STREAM, uri)
+            type = "video/mp4"
+            putExtra(Intent.EXTRA_TEXT, "Snimljeno u GeoGalleryju!")
+            type = "text/plain"
+        }
+
+        (context as Activity).startActivity(Intent.createChooser(shareIntent, null))
+    }
+
     private fun setVideoMargins(frameLayout : FrameLayout)
     {
         val param = frameLayout.layoutParams as ViewGroup.MarginLayoutParams
@@ -209,8 +223,8 @@ class VideoGallery(private val galleryFragment: GalleryFragment, private var con
     {
         val playIcon = ImageView(galleryFragment.activity)
         playIcon.layoutParams = createLayoutParams()
-        playIcon.layoutParams.height = 300
-        playIcon.layoutParams.width = 300
+        playIcon.layoutParams.height = 600
+        playIcon.layoutParams.width = 600
         playIcon.scaleType = ImageView.ScaleType.FIT_XY
         //playIcon.scaleType=ImageView.ScaleType.FIT_CENTER
         playIcon.setImageDrawable(galleryFragment.activity?.resources?.getDrawable(R.drawable.ic_baseline_play_button))
