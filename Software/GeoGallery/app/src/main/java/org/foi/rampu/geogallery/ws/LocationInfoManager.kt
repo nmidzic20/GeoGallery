@@ -37,7 +37,12 @@ class LocationInfoManager(val locationInfoFragment: LocationInfoFragment) {
     fun displayLocationInfo(location : String) : Boolean
     {
         val locationInfo = WsLocationInfoResultList.results.firstOrNull{ it.title == location }
-        val paragraph = locationInfo?.extract?.split("\r?\n|\r".toRegex())?.get(0)
+        var paragraph = locationInfo?.extract?.split("\r?\n|\r".toRegex())?.get(0)
+
+        //second paragraph?
+        //if (locationInfo?.extract?.split("\r?\n|\r".toRegex())?.get(1) != null)
+            //paragraph += locationInfo?.extract?.split("\r?\n|\r".toRegex())?.get(1)
+
         locationInfoFragment.view?.findViewById<TextView>(R.id.tv_location_info)?.text = paragraph
 
         if (locationInfo != null)

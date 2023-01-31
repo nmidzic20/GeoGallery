@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
@@ -99,6 +100,7 @@ class AudioGallery(private val galleryFragment: GalleryFragment, private var con
         imageView.layoutParams.width = 500
         imageView.scaleType = ImageView.ScaleType.FIT_XY
         imageView.setImageResource(R.drawable.ic_voice)
+        imageView.setColorFilter(Color.WHITE)
 
         imageView.setOnClickListener {
 

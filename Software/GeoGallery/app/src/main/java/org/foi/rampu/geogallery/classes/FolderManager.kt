@@ -1,6 +1,7 @@
 package org.foi.rampu.geogallery.classes
 
 import android.content.Intent
+import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -38,6 +39,8 @@ class FolderManager(val activity: HomeActivity) {
         val locationsList = mutableListOf<String>()
         AllLocationsInfo.savedLocationInfo.forEach { locationsList.add(it.country) }
         val locationsSet = locationsList.toSet()
+
+        Log.i("DATA", "locationsSet $locationsSet")
 
         for (country in locationsSet)
         {
@@ -131,6 +134,8 @@ class FolderManager(val activity: HomeActivity) {
 
         ivFolder.contentDescription = locationCategory.toString()//tvFolderName.text.toString()
         tvFolderName.contentDescription = locationCategory.toString()//tvFolderName.text.toString()
+        tvFolderName.height = 100
+
 
         linearLayout.addView(ivFolder)
         linearLayout.addView(tvFolderName)
