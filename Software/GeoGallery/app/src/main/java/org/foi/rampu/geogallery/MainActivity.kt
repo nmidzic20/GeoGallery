@@ -48,13 +48,6 @@ class MainActivity : AppCompatActivity() {
             performLogin() //Odrađuje login logiku
 
        }
-
-        viewBinding.button.setOnClickListener {
-
-            startActivity(Intent(this, HomeActivity::class.java))
-            finish()
-
-        }
     }
 
     private fun performLogin() {
