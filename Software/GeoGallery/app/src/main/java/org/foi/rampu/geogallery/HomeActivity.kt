@@ -131,19 +131,19 @@ class HomeActivity : AppCompatActivity() {
         //prefs.edit().remove("all_locations_media_taken").commit();
 
         var locsString = prefs.getString("all_locations_media_taken", resources.getString(R.string.shared_prefs_default_location_info))
-        Log.i("HOME ACTIVITY ", locsString.toString())
+        Log.i("HOME_ACTIVITY ", locsString.toString())
 
         var locations = mutableSetOf<SavedLocationInfo>()
         if (locsString != resources.getString(R.string.shared_prefs_default_location_info))
             locations = Json.decodeFromString<MutableSet<SavedLocationInfo>>(locsString!!)
 
-        Log.i("HOME DESERIALISED ", locations.toString())
+        Log.i("HOME_DESERIALISED ", locations.toString())
 
         if (locations != null) AllLocationsInfo.savedLocationInfo = locations!!
 
 
         var size = AllLocationsInfo.savedLocationInfo.size
-        Log.i("HOME ACTIVITY SIZE", size.toString())
+        Log.i("HOME_ACTIVITY_SIZE", size.toString())
 
         if (size != 0)
         {
