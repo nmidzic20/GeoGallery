@@ -2,18 +2,26 @@ package org.foi.rampu.geogallery
 
 import android.Manifest
 import android.content.ContentValues
+import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.media.MediaRecorder
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.MediaStore.Audio
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import org.foi.rampu.geogallery.classes.CurrentLocationInfo
+import org.foi.rampu.geogallery.classes.MediaLocationManager
 import org.foi.rampu.geogallery.databinding.ActivityAudioBinding
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -24,6 +32,8 @@ class AudioActivity : AppCompatActivity() {
 
     private var audioCapture: MediaRecorder? = null
     private var isRecording: Boolean = false
+
+    private var mediaLocationManager = MediaLocationManager()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -41,7 +51,7 @@ class AudioActivity : AppCompatActivity() {
                 )
             } else {
                 if (!isRecording) {
-                    startRecording()
+                    startRecording(this)
                 } else {
                     stopRecording()
                 }
@@ -49,7 +59,7 @@ class AudioActivity : AppCompatActivity() {
         }
     }
 
-    private fun prepareRecorder() {
+    private fun prepareRecorder(context: Context) {
         audioCapture = MediaRecorder()
         audioCapture?.setAudioSource(MediaRecorder.AudioSource.MIC)
         audioCapture?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
@@ -57,26 +67,29 @@ class AudioActivity : AppCompatActivity() {
         audioCapture?.setAudioEncodingBitRate(16)
         audioCapture?.setAudioSamplingRate(44100)
 
-        val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
-            .format(System.currentTimeMillis())
+        mediaLocationManager.saveLocationsFromSharedPrefsToAllLocationsInfo(context, this)
+        val data = CurrentLocationInfo.locationInfo.value
+        Log.i("DATA", "photo name " + data.toString())
+        val dataString = Json.encodeToString(data)
+        val name = dataString + SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis())
 
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
             put(MediaStore.MediaColumns.MIME_TYPE, "audio/mpeg")
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-                put(MediaStore.Audio.Media.RELATIVE_PATH, "Recordings")
+                put(Audio.Media.RELATIVE_PATH, "Music")
             }
         }
-        val audioUri =
-            contentResolver.insert(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, contentValues)
+        val audioUri: Uri? =
+            contentResolver.insert(Audio.Media.EXTERNAL_CONTENT_URI, contentValues)
         val file = contentResolver.openFileDescriptor(audioUri!!, "w")
 
         audioCapture?.setOutputFile(file?.fileDescriptor)
         audioCapture?.prepare()
     }
 
-    private fun startRecording() {
-        prepareRecorder()
+    private fun startRecording(context: Context) {
+        prepareRecorder(context)
         isRecording = true
 
         try {

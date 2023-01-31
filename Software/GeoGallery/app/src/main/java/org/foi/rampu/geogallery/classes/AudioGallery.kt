@@ -13,78 +13,79 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.PopupMenu
-import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat.startActivity
 import androidx.core.view.isVisible
 import org.foi.rampu.geogallery.R
 import org.foi.rampu.geogallery.fragments.GalleryFragment
 
 
-class PhotoGallery(private val galleryFragment: GalleryFragment, private var context: Context) {
+class AudioGallery(private val galleryFragment: GalleryFragment, private var context: Context) {
 
     @RequiresApi(Build.VERSION_CODES.R)
-    fun displayPhotos()
+    fun displayAudio()
     {
-        val projection = arrayOf(MediaStore.Images.Media._ID)
+        val projection = arrayOf(MediaStore.Audio.Media._ID)
         val selection : String? = null
         val selectionArgs = arrayOf<String>()
         val sortOrder : String? = null
         val mediaLocationManager = MediaLocationManager()
 
-        //fetch all images from MediaStore
+        //fetch all audio files from MediaStore
         galleryFragment.activity?.applicationContext?.contentResolver?.query(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
             projection,
             selection,
-            selectionArgs,
+            null,
             sortOrder
         )?.use { cursor ->
             while (cursor.moveToNext()) {
 
-                val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+                val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
                 val id = cursor.getLong(idColumn)
                 val contentUri: Uri = ContentUris.withAppendedId(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                     id
                 )
 
-                val imgUri = Uri.parse(contentUri.toString())
-                Log.i("URI", imgUri.toString())
+                val audioUri = Uri.parse(contentUri.toString())
+                Log.i("AUDIO", "uri$audioUri")
 
-                //var locationMetadata = mediaLocationManager.getLocationMetadata(galleryFragment, imgUri)
-                var name = mediaLocationManager.getFileName(imgUri, this.galleryFragment.requireActivity())
-                if (name?.get(0)  == '{') {
-
-                    val locationMetadata = mediaLocationManager.getLocationFromMediaName(
-                        imgUri,
+                var name = mediaLocationManager.getFileName(audioUri, this.galleryFragment.requireActivity())
+                if (name?.get(0)  == '{')
+                {
+                    val locationMetadata = mediaLocationManager.getLocationFromMediaName(audioUri,
                         this.galleryFragment.requireActivity()
                     )
 
-                    //display image only if its location metadata matches folder location name
-                    Log.i(
-                        "IMAGE_SHOWN?",
-                        locationMetadata.toString() + " " + galleryFragment.folderName
-                    )
-
-                    if (locationMetadata.street == galleryFragment.folderName) {
-                        createImageView(imgUri)
-                        Log.i("IMAGE_SHOWN?", "yes")
-                    } else
-                        Log.i("IMAGE_SHOWN?", "no")
+                    if (locationMetadata.street == galleryFragment.folderName)
+                    {
+                        createAudioView(audioUri)
+                        Log.i("AUDIO", "yes")
+                    }
+                    else
+                        Log.i("AUDIO", "no")
                 }
 
+
+               /* val locationMetadata = mediaLocationManager.getLocationFromMediaName(audioUri,
+                    this.galleryFragment.requireActivity()
+                )
+
+                if (locationMetadata.street == galleryFragment.folderName)
+                {
+                    createAudioView(audioUri)
+                    Log.i("AUDIO", "yes")
+                }
+                else
+                    Log.i("AUDIO", "no")*/
             }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
-    private fun createImageView(imgUri : Uri)
-    {
+    private fun createAudioView(audioUri : Uri) {
 
         val layout = galleryFragment.view?.findViewById<View>(R.id.gridLayout) as ViewGroup
-            //line below only for activities, if using findViewById for fragments, need to get it from view/getView() first!
-            //activity.findViewById<View>(org.foi.rampu.geogallery.R.id.gridLayout) as ViewGroup
 
         val imageView = ImageView(galleryFragment.activity)
         imageView.layoutParams =
@@ -94,10 +95,10 @@ class PhotoGallery(private val galleryFragment: GalleryFragment, private var con
             )
 
         imageView.setImageURI(null)
-        imageView.setImageURI(imgUri)
         imageView.layoutParams.height = 500
         imageView.layoutParams.width = 500
         imageView.scaleType = ImageView.ScaleType.FIT_XY
+        imageView.setImageResource(R.drawable.ic_voice)
 
         imageView.setOnClickListener {
 
@@ -105,37 +106,39 @@ class PhotoGallery(private val galleryFragment: GalleryFragment, private var con
             galleryFragment.activity?.startActivity(
                 Intent(
                     Intent.ACTION_VIEW,
-                    imgUri
+                    audioUri
                 )
             )
         }
 
         imageView.setOnLongClickListener {
             //Toast.makeText(context, "Long click detected", Toast.LENGTH_SHORT).show()
-            showPopup(imageView, imgUri)
+            showPopup(imageView, audioUri)
             true
         }
 
         layout.addView(imageView)
+        Log.i("imgview", imageView.toString())
 
         setImageMargins(imageView)
+
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
-    private fun showPopup(view: ImageView, imgUri: Uri) {
+    private fun showPopup(view: ImageView, audioUri: Uri) {
 
-        val uriList = mutableListOf(imgUri)
+        val uriList = mutableListOf(audioUri)
         val popup = PopupMenu(context, view)
         popup.inflate(R.menu.popup_menu)
 
         popup.setOnMenuItemClickListener { item: MenuItem? ->
             when (item!!.itemId) {
                 R.id.share -> {
-                    sharePhoto(imgUri)
+                    shareAudio(audioUri)
                     //Toast.makeText(context, item.title, Toast.LENGTH_SHORT).show()
                 }
                 R.id.delete -> {
-                    deletePhoto(uriList, view)
+                    deleteAudio(uriList, view)
                     // Toast.makeText(context, item.title, Toast.LENGTH_SHORT).show()
                 }
             }
@@ -147,7 +150,7 @@ class PhotoGallery(private val galleryFragment: GalleryFragment, private var con
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
-    private fun deletePhoto(uriList: List<Uri>, view : View) {
+    private fun deleteAudio(uriList: List<Uri>, view : ImageView) {
 
         val activity = context as Activity
         val req = MediaStore.createDeleteRequest(context.contentResolver, uriList)
@@ -155,27 +158,27 @@ class PhotoGallery(private val galleryFragment: GalleryFragment, private var con
         activity.startIntentSenderForResult(req.intentSender, 123,
             null, 0, 0, 0, null
         )
-        view.isVisible = false
 
+        //view.isVisible = false
         //activity.finish()
         //activity.startActivity(activity.intent)
     }
 
-    private fun sharePhoto(uri: Uri) {
+    private fun shareAudio(uri: Uri) {
 
         val shareIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_STREAM, uri)
             type = "image/jpeg"
-            putExtra(Intent.EXTRA_TEXT, "Slikano u GeoGalleryju!")
+            putExtra(Intent.EXTRA_TEXT, "Snimljeno u GeoGalleryju!")
             type = "text/plain"
         }
 
         (context as Activity).startActivity(Intent.createChooser(shareIntent, null))
     }
 
-    private fun setImageMargins(imageView : ImageView)
-    {
+    private fun setImageMargins(imageView : ImageView) {
+
         val param = imageView.layoutParams as ViewGroup.MarginLayoutParams
         param.setMargins(20,20,20,20)
         imageView.layoutParams = param
