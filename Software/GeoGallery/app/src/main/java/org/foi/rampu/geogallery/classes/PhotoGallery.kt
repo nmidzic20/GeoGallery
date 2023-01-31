@@ -16,6 +16,7 @@ import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat.startActivity
+import androidx.core.view.isVisible
 import org.foi.rampu.geogallery.R
 import org.foi.rampu.geogallery.fragments.GalleryFragment
 
@@ -52,21 +53,26 @@ class PhotoGallery(private val galleryFragment: GalleryFragment, private var con
                 Log.i("URI", imgUri.toString())
 
                 //var locationMetadata = mediaLocationManager.getLocationMetadata(galleryFragment, imgUri)
+                var name = mediaLocationManager.getFileName(imgUri, this.galleryFragment.requireActivity())
+                if (name?.get(0)  == '{') {
 
-                val locationMetadata = mediaLocationManager.getLocationFromMediaName(imgUri,
-                    this.galleryFragment.requireActivity()
-                )
+                    val locationMetadata = mediaLocationManager.getLocationFromMediaName(
+                        imgUri,
+                        this.galleryFragment.requireActivity()
+                    )
 
-                //display image only if its location metadata matches folder location name
-                Log.i("IMAGE_SHOWN?", locationMetadata.toString() + " " + galleryFragment.folderName)
+                    //display image only if its location metadata matches folder location name
+                    Log.i(
+                        "IMAGE_SHOWN?",
+                        locationMetadata.toString() + " " + galleryFragment.folderName
+                    )
 
-                if (locationMetadata.street == galleryFragment.folderName)
-                {
-                    createImageView(imgUri)
-                    Log.i("IMAGE_SHOWN?", "yes")
+                    if (locationMetadata.street == galleryFragment.folderName) {
+                        createImageView(imgUri)
+                        Log.i("IMAGE_SHOWN?", "yes")
+                    } else
+                        Log.i("IMAGE_SHOWN?", "no")
                 }
-                else
-                    Log.i("IMAGE_SHOWN?", "no")
 
             }
         }
@@ -116,7 +122,7 @@ class PhotoGallery(private val galleryFragment: GalleryFragment, private var con
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
-    private fun showPopup(view: View, imgUri: Uri) {
+    private fun showPopup(view: ImageView, imgUri: Uri) {
 
         val uriList = mutableListOf(imgUri)
         val popup = PopupMenu(context, view)
@@ -129,7 +135,7 @@ class PhotoGallery(private val galleryFragment: GalleryFragment, private var con
                     //Toast.makeText(context, item.title, Toast.LENGTH_SHORT).show()
                 }
                 R.id.delete -> {
-                    deletePhoto(uriList)
+                    deletePhoto(uriList, view)
                     // Toast.makeText(context, item.title, Toast.LENGTH_SHORT).show()
                 }
             }
@@ -141,7 +147,7 @@ class PhotoGallery(private val galleryFragment: GalleryFragment, private var con
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
-    private fun deletePhoto(uriList: List<Uri>) {
+    private fun deletePhoto(uriList: List<Uri>, view : View) {
 
         val activity = context as Activity
         val req = MediaStore.createDeleteRequest(context.contentResolver, uriList)
@@ -149,6 +155,7 @@ class PhotoGallery(private val galleryFragment: GalleryFragment, private var con
         activity.startIntentSenderForResult(req.intentSender, 123,
             null, 0, 0, 0, null
         )
+        view.isVisible = false
 
         //activity.finish()
         //activity.startActivity(activity.intent)

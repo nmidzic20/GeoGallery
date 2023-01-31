@@ -17,6 +17,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import org.foi.rampu.geogallery.R
 import org.foi.rampu.geogallery.fragments.GalleryFragment
 
@@ -49,24 +50,33 @@ class VideoGallery(private val galleryFragment: GalleryFragment, private var con
                 val videoUri = Uri.parse(contentUri.toString())
                 Log.i("URI", videoUri.toString())
 
+                var name = mediaLocationManager.getFileName(videoUri, this.galleryFragment.requireActivity())
+                if (name?.get(0)  == '{') {
 
-                val locationMetadata = mediaLocationManager.getLocationFromMediaName(videoUri,
-                    this.galleryFragment.requireActivity()
-                )
+                    val locationMetadata = mediaLocationManager.getLocationFromMediaName(
+                        videoUri,
+                        this.galleryFragment.requireActivity()
+                    )
 
-                //display video only if its location metadata matches folder location name
-                Log.i("VIDEO_SHOWN?", locationMetadata.toString() + " " + galleryFragment.folderName)
+                    //display video only if its location metadata matches folder location name
+                    Log.i(
+                        "VIDEO_SHOWN?",
+                        locationMetadata.toString() + " " + galleryFragment.folderName
+                    )
 
-                if (locationMetadata.street == galleryFragment.folderName)
-                {
-                    val thumbnail = galleryFragment.requireActivity().applicationContext.contentResolver.loadThumbnail(videoUri, Size(500, 500), null)
+                    if (locationMetadata.street == galleryFragment.folderName) {
+                        val thumbnail =
+                            galleryFragment.requireActivity().applicationContext.contentResolver.loadThumbnail(
+                                videoUri,
+                                Size(500, 500),
+                                null
+                            )
 
-                    createVideoView(videoUri, thumbnail)
-                    Log.i("VIDEO_SHOWN?", "yes")
+                        createVideoView(videoUri, thumbnail)
+                        Log.i("VIDEO_SHOWN?", "yes")
+                    } else
+                        Log.i("VIDEO_SHOWN?", "no")
                 }
-                else
-                    Log.i("VIDEO_SHOWN?", "no")
-
 
             }
         }
@@ -150,7 +160,7 @@ class VideoGallery(private val galleryFragment: GalleryFragment, private var con
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
-    private fun showPopup(view: View, videoUri: Uri) {
+    private fun showPopup(view: ImageView, videoUri: Uri) {
 
         val uriList = mutableListOf(videoUri)
         val popup = PopupMenu(context, view)
@@ -163,7 +173,7 @@ class VideoGallery(private val galleryFragment: GalleryFragment, private var con
                     //Toast.makeText(context, item.title, Toast.LENGTH_SHORT).show()
                 }
                 R.id.delete -> {
-                    deleteVideo(uriList)
+                    deleteVideo(uriList, view)
                     //Toast.makeText(context, item.title, Toast.LENGTH_SHORT).show()
                 }
             }
@@ -175,7 +185,7 @@ class VideoGallery(private val galleryFragment: GalleryFragment, private var con
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
-    private fun deleteVideo(uriList: List<Uri>) {
+    private fun deleteVideo(uriList: List<Uri>, view : ImageView) {
 
         val activity = context as Activity
         val req = MediaStore.createDeleteRequest(context.contentResolver, uriList)
@@ -184,6 +194,7 @@ class VideoGallery(private val galleryFragment: GalleryFragment, private var con
             null, 0, 0, 0, null
         )
 
+        //view.isVisible = false
         //activity.finish()
         //activity.startActivity(activity.intent)
     }

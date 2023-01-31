@@ -71,6 +71,7 @@ class MediaLocationManager {
         var name = getFileName(mediaUri, activity)
 
         Log.i("DATA_NAME", name!!)
+
         var locationDataString = name?.split("___")
         var country = locationDataString?.get(1)?.split("_")?.get(0)
         var city = locationDataString?.get(2)?.split("_")?.get(0)

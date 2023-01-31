@@ -30,7 +30,7 @@ class GalleryFragment : Fragment() {
 
         val photoGallery = PhotoGallery(this, requireContext())
         val videoGallery = VideoGallery(this, requireContext())
-        val audioGallery = AudioGallery(this)
+        val audioGallery = AudioGallery(this, requireContext())
 
         photoGallery.displayPhotos()
         videoGallery.displayVideos()
