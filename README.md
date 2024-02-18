@@ -1,35 +1,25 @@
-# GeoGallery
+# Final product demo
 
-## Projektni tim
-(svi članovi tima moraju biti iz iste seminarske grupe)
+[Demo](https://www.dropbox.com/scl/fi/eo4j24rimifgpwef26s6s/GeoGallery_demo.mp4?rlkey=ntn5mhb9qa0ul2dv7xdgdecr3&dl=0)
 
-Ime i prezime | E-mail adresa (FOI) | JMBAG | Github korisničko ime | Seminarska grupa
-------------  | ------------------- | ----- | --------------------- | ----------------
-Hrvoje Lukšić | hluksic20@foi.hr | 0016148613 | HLuksic | G01
-David Kajzogaj | dkajzogaj20@foi.hr | 0016146827 | davidkajzogaj | G01
-Noa Midžić | nmidzic20@foi.hr | 0108082571 | nmidzic20 | G01
+# Domain Description
 
-## Opis domene
-GeoGallery običnu galeriju pretvara u nešto zanimljivo, poučno i interaktivno. Snimljene fotografije, video i audio zapisi postavljaju se na kartu pomoću lokacije mobilnog uređaja i Googleovih servisa. Ovisno o razini zooma grupiraju se u skupine po kontinentu, državi, gradu itd. sve do pojedinačnih lokacija. O lokacijama se po mogućnosti povlače kratke informacije s wikipedije. Korisnik može imenovati, opisivati, grupirati i premještati medije po želji te ih zajedno s informacijama dijeliti na društvenim mrežama.
+GeoGallery transforms a regular gallery into something interesting, educational, and interactive. Captured photographs, videos, and audio recordings are placed on a map based on the location of the mobile device and Google services. Depending on the zoom level, they are grouped into clusters by continent, country, city, etc., down to individual locations. Short information from Wikipedia about the locations is preferably pulled. Users can name, describe, group, and move media as desired, and share them with information on social networks.
 
-## Specifikacija projekta
-Oznaka | Naziv | Kratki opis | Odgovorni član tima
+# Project Specification
+
+Label	| Name	| Brief Description	| Team Member Responsible
 ------ | ----- | ----------- | -------------------
-F01 | Login | Korisnik se pomoću e-maila logira u aplikaciju | David Kajzogaj
-F02 | Korištenje mikrofona | Za osnovne funkcije GeoGalleryja potrebno je omogućiti korištenje mikrofona | Hrvoje Lukšić
-F03 | Korištenje lokacije | Iako nije nužno, GeoGallery može koristiti lokaciju mobilnog uređaja da bi automatski postavio medije na njihovu lokaciju na karti | David Kajzogaj
-F04 | Korištenje Google karti | GeoGallery za uslugu karte koristi Googleove servise | David Kajzogaj
-F05 | CRUD funkcionalnosti nad medijima | Korisnik može dodavati, pregledavati, mijenjati i brisati medije i njihove informacije | Hrvoje Lukšić
-F06 | Dohvat informacija s wiki stranice | GeoGallery radi opisa lokacije (gdje je moguće) koristi informacije s wiki stranica s otvorenim API-jem | Noa Midžić
-F07 | Korištenje kamere | Za osnovne funkcije GeoGalleryja potrebno je omogućiti korištenje kamere | Noa Midžić
-F08 | Dijeljenje medija | Korisnik može medije dijeliti na društvenim mrežama zajedno s odabranim informacijama | Hrvoje Lukšić
-F09 | Statistika | Korisnik može vidjeti koliko je zapisa snimio na pojedinom kontinentu, državi, gradu itd. | Noa Midžić
+F01	| Login	| User logs into the application using email	| [davidkajzogaj](https://github.com/davidkajzogaj)
+F02	| Microphone Usage	| Basic GeoGallery functions require enabling the use of the microphone	| [HLuksic](https://github.com/HLuksic)
+F03	| Location Usage	| Although not mandatory, GeoGallery can use the mobile device's location to automatically place media on their location on the map	| [davidkajzogaj](https://github.com/davidkajzogaj)
+F04	|Google Maps Usage	| GeoGallery uses Google services for map service	| [davidkajzogaj](https://github.com/davidkajzogaj)
+F05	| CRUD Functionalities on Media |	Users can add, view, modify, and delete media and their information	| [HLuksic](https://github.com/HLuksic)
+F06	| Retrieval of Information from Wikipedia Page	| GeoGallery uses information from Wikipedia pages with an open API for location descriptions (where possible)	| [nmidzic20](https://github.com/nmidzic20)
+F07	| Camera Usage	| Basic GeoGallery functions require enabling the use of the camera	| [nmidzic20](https://github.com/nmidzic20)
+F08	| Media Sharing	| Users can share media on social networks along with selected information	| [HLuksic](https://github.com/HLuksic)
+F09	| Statistics	| Users can see how many records they have captured in each continent, country, city, etc.	| [nmidzic20](https://github.com/nmidzic20)
 
-## Tehnologije i oprema
-GeoGallery je namijenjen za Android uređaje. Za razvoj ćemo koristiti Android studio i programski jezik Kotlin. Potrebni vanjski servisi su API za Google karte i wiki stranice.
+# Technologies and Equipment
 
-## Baza podataka i web server
-Za aplikaciju je potrebna baza podataka sa e-mailovima i lozinkama korisnika.
-
-## .gitignore
-Uzmite u obzir da je u mapi Software .gitignore konfiguriran za nekoliko tehnologija, ali samo ako će projekti biti smješteni direktno u mapu Software ali ne i u neku pod mapu. Nakon odabira konačne tehnologije i projekta obavezno dopunite/premjestite gitignore kako bi vaš projekt zadovoljavao kriterije koji su opisani u ReadMe.md dokumentu dostupnom u mapi Software.
+GeoGallery is intended for Android devices. For development, we will use Android Studio and the Kotlin programming language. External services required are the Google Maps API and wiki pages API.
