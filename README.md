@@ -4,9 +4,9 @@
 
 # Login test data
 
-Email - test@test.hr  
+Email: test@test.hr  
   
-Password - test12345
+Password: test12345
 
 # Domain Description
 
