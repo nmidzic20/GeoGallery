@@ -2,6 +2,12 @@
 
 [Demo](https://www.dropbox.com/scl/fi/eo4j24rimifgpwef26s6s/GeoGallery_demo.mp4?rlkey=ntn5mhb9qa0ul2dv7xdgdecr3&dl=0)
 
+# Login test data
+
+Email - test@test.hr  
+  
+Password - test12345
+
 # Domain Description
 
 GeoGallery transforms a regular gallery into something interesting, educational, and interactive. Captured photographs, videos, and audio recordings are grouped into folders and placed on a map based on the location of the mobile device and Google services. Short information from Wikipedia about the locations is displayed for each location. Users can share their media on social networks.
